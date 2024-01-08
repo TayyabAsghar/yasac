@@ -1,8 +1,9 @@
 import '../globals.css';
+import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 
-export const metadata = {
+export const metadata: Metadata = {
     title: 'YASAC',
     description: 'Yet Another Social App Clone built on Next.js'
 };
