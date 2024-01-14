@@ -1,34 +1,8 @@
-import { redirect } from "next/navigation";
-import ThreadCard from "../cards/thread-card";
-import { fetchUserThreads } from "@/lib/actions/user.actions";
-import { fetchCommunityPosts } from "@/lib/actions/community.actions";
-
-type Result = {
-    name: string;
-    image: string;
-    id: string;
-    threads: {
-        _id: string;
-        text: string;
-        parentId: string | null;
-        author: {
-            name: string;
-            image: string;
-            id: string;
-        };
-        community: {
-            id: string;
-            name: string;
-            image: string;
-        } | null;
-        createdAt: string;
-        children: {
-            author: {
-                image: string;
-            };
-        }[];
-    }[];
-};
+import { redirect } from 'next/navigation';
+import ThreadCard from '../cards/thread-card';
+import { ThreadsObject } from '@/core/types/thread-data';
+import { fetchUserThreads } from '@/lib/actions/user.actions';
+import { fetchCommunityThreads } from '@/lib/actions/community.actions';
 
 type Props = {
     currentUserId: string;
@@ -37,17 +11,15 @@ type Props = {
 };
 
 export default async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
-    let result: Result;
+    let result: ThreadsObject;
 
-    if (accountType === "Community") {
-        result = await fetchCommunityPosts(accountId);
-    } else {
+    if (accountType === 'Community')
+        result = await fetchCommunityThreads(accountId);
+    else
         result = await fetchUserThreads(accountId);
-    }
 
-    if (!result) {
-        redirect("/");
-    }
+
+    if (!result) redirect('/');
 
     return (
         <section className='mt-9 flex flex-col gap-10'>
@@ -59,7 +31,7 @@ export default async function ThreadsTab({ currentUserId, accountId, accountType
                     parentId={thread.parentId}
                     content={thread.text}
                     author={
-                        accountType === "User"
+                        accountType === 'User'
                             ? { name: result.name, image: result.image, id: result.id }
                             : {
                                 name: thread.author.name,
@@ -68,7 +40,7 @@ export default async function ThreadsTab({ currentUserId, accountId, accountType
                             }
                     }
                     community={
-                        accountType === "Community"
+                        accountType === 'Community'
                             ? { name: result.name, id: result.id, image: result.image }
                             : thread.community
                     }

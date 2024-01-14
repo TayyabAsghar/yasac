@@ -10,6 +10,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createThread } from '@/lib/actions/thread.actions';
 import { ThreadValidations } from '@/lib/validations/thread';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { useOrganization } from '@clerk/nextjs';
 
 type Props = {
     userId: string;
@@ -18,8 +19,7 @@ type Props = {
 export default function PostThread({ userId }: Props) {
     const router = useRouter();
     const pathname = usePathname();
-
-    // const { organization } = useOrganization();
+    const { organization } = useOrganization();
 
     const form = useForm({
         resolver: zodResolver(ThreadValidations),
@@ -47,8 +47,7 @@ export default function PostThread({ userId }: Props) {
         <Form {...form}>
             <form
                 className='mt-10 flex flex-col justify-start gap-10'
-                onSubmit={form.handleSubmit(onSubmit)}
-            >
+                onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                     control={form.control}
                     name='thread'
