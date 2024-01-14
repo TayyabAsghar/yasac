@@ -2,9 +2,10 @@ import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs';
 import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadCard from '@/components/cards/thread-card';
+import Pagination from '@/components/shared/pagination';
 import { fetchThread } from '@/lib/actions/thread.actions';
 
-export default async function Home() {
+export default async function Home({ searchParams, }: { searchParams: { [key: string]: string | undefined; }; }) {
   const user = await currentUser();
   if (!user) return null;
 
@@ -39,11 +40,8 @@ export default async function Home() {
         )}
       </section>
 
-      <Pagination
-        path='/'
-        pageNumber={searchParams?.page ? +searchParams.page : 1}
-        isNext={result.isNext}
-      />
+      <Pagination path='/' pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext} />
     </>
   );
 }
