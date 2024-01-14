@@ -1,3 +1,5 @@
+import { SortOrder } from 'mongoose';
+
 export type UserData = {
     id: string;
     objectId: string;
@@ -14,4 +16,12 @@ export type DBUserData = {
     bio: string;
     image: string;
     path: string;
+};
+
+export type UserListOptions = {
+    userId: string;
+    searchString: string;
+    pageNumber: number;
+    pageSize: number;
+    sortBy: SortOrder;
 };
