@@ -8,6 +8,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { IncomingHttpHeaders } from 'http';
 import { Webhook, WebhookRequiredHeaders } from 'svix';
+import { CommunityData } from '@/core/types/community-data';
 import { addMemberToCommunity, createCommunity, deleteCommunity, removeUserFromCommunity, updateCommunityInfo } from '@/lib/actions/community.actions';
 
 // Resource: https://clerk.com/docs/integration/webhooks#supported-events
@@ -57,23 +58,24 @@ export const POST = async (request: Request) => {
         const { id, name, slug, logo_url, image_url, created_by } =
             event?.data ?? {};
 
+        const communityData: CommunityData = {
+            id: id.toString(),
+            name: name.toString(),
+            username: slug.toString(),
+            image: logo_url.toString() || image_url.toString(),
+            bio: 'org bio',
+            createdById: created_by.toString()
+        };
+
         try {
-            await createCommunity(
-                // @ts-ignore
-                id,
-                name,
-                slug,
-                logo_url || image_url,
-                'org bio',
-                created_by
-            );
+            await createCommunity(communityData);
 
             return NextResponse.json({ message: 'User created' }, { status: 201 });
         } catch (err) {
             console.log(err);
             return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
         }
-    }
+    };
 
     // Listen organization invitation creation event.
     // Just to show. You can avoid this or tell people that we can create a new mongoose action and

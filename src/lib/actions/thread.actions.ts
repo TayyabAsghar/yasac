@@ -4,8 +4,8 @@ import User from '../models/user.model';
 import { connectToDB } from '../mongoose';
 import { revalidatePath } from 'next/cache';
 import Thread from '../models/thread.model';
+import Community from '../models/community.model';
 import { ThreadData } from '@/core/types/thread-data';
-// import Community from '../models/community.model';
 
 
 export async function fetchThread(pageNumber = 1, pageSize = 20) {
@@ -209,8 +209,7 @@ export async function addCommentToThread(threadId: string, commentText: string, 
         await originalThread.save();
 
         revalidatePath(path);
-    } catch (err) {
-        console.error('Error while adding comment:', err);
-        throw new Error('Unable to add comment');
+    } catch (error: any) {
+        throw new Error(`Error while adding comment: ${error.message}`);
     }
 }
