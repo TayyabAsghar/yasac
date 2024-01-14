@@ -6,6 +6,7 @@ import Header from '@/components/shared/header';
 import Footer from '@/components/shared/footer';
 import LeftSider from '@/components/shared/left-sider';
 import RightSider from '@/components/shared/right-sider';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             <section className='main-container'>
               <div className='w-full max-w-4xl'>
                 {children}
+                <SpeedInsights />
               </div>
             </section>
             <RightSider />
