@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { SiderLinks } from '@/constants/navigation-links';
+import { SiderLinks } from '@/core/constants/navigation-links';
 import { SignedIn, SignOutButton, useAuth } from '@clerk/nextjs';
 
 export default function LeftSider() {

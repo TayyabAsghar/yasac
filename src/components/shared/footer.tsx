@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { SiderLinks } from '@/constants/navigation-links';
+import { SiderLinks } from '@/core/constants/navigation-links';
 
 export default function Footer() {
     const pathname = usePathname();
