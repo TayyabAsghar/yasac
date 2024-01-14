@@ -8,10 +8,12 @@ import { useForm } from 'react-hook-form';
 import { Textarea } from '../ui/textarea';
 import { isBase64Image } from '@/lib/utils';
 import { ChangeEvent, useState } from 'react';
-import { UserData } from '@/core/types/user-data';
 import { useUploadThing } from '@/lib/uploadthing';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { updateUser } from '@/lib/actions/user.actions';
+import { usePathname, useRouter } from 'next/navigation';
 import { UserValidations } from '@/lib/validations/user';
+import { DBUserData, UserData } from '@/core/types/user-data';
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 type Props = {
@@ -20,6 +22,8 @@ type Props = {
 };
 
 export default function AccountProfile({ user, btnTitle }: Props) {
+    const router = useRouter();
+    const pathname = usePathname();
     const [files, setFiles] = useState<File[]>([]);
     const { startUpload } = useUploadThing("media");
 
@@ -55,13 +59,29 @@ export default function AccountProfile({ user, btnTitle }: Props) {
 
     const onSubmit = async (values: z.infer<typeof UserValidations>) => {
         const hasImageChanged = isBase64Image(values.profilePhoto);
+        const userData: DBUserData = {
+            name: values.name,
+            path: pathname,
+            username: values.username,
+            userId: user.id,
+            bio: values.bio,
+            image: values.profilePhoto
+        };
 
         if (hasImageChanged) {
             const imgRes = await startUpload(files);
 
             if (imgRes && imgRes[0].url) {
-                values.profilePhoto = imgRes[0].url;
+                userData.image = imgRes[0].url;
             }
+        }
+
+        await updateUser(userData);
+
+        if (pathname === "/profile/edit") {
+            router.back();
+        } else {
+            router.push("/");
         }
     };
 

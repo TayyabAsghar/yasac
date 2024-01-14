@@ -6,3 +6,12 @@ export type UserData = {
     bio: string;
     image: string;
 };
+
+export type DBUserData = {
+    userId: string;
+    username: string;
+    name: string;
+    bio: string;
+    image: string;
+    path: string;
+};
