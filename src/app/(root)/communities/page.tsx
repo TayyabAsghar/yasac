@@ -5,6 +5,7 @@ import Pagination from '@/components/shared/pagination';
 import { fetchUser } from '@/lib/actions/user.actions';
 import CommunityCard from '@/components/cards/community-card';
 import { fetchCommunities } from '@/lib/actions/community.actions';
+import { CommunityListOptions } from '@/core/types/community-data';
 
 export default async function Page({ searchParams }: { searchParams: { [key: string]: string | undefined; }; }) {
     const user = await currentUser();
@@ -13,11 +14,14 @@ export default async function Page({ searchParams }: { searchParams: { [key: str
     const userInfo = await fetchUser(user.id);
     if (!userInfo?.onboarded) redirect('/onboarding');
 
-    const result = await fetchCommunities({
-        searchString: searchParams.q,
-        pageNumber: searchParams?.page ? +searchParams.page : 1,
+    const options: CommunityListOptions = {
         pageSize: 25,
-    });
+        sortBy: 'asc',
+        searchString: searchParams.q ?? '',
+        pageNumber: searchParams?.page ? +searchParams.page : 1
+    };
+
+    const result = await fetchCommunities(options);
 
     return (
         <>
