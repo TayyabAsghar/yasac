@@ -16,6 +16,7 @@ export default function LeftSider() {
             <div className='flex w-full flex-1 flex-col gap-6 px-6'>
                 {SiderLinks.map(link => {
                     const isActive = (pathname.includes(link.route) && link.route.length > 1) || pathname === link.route;
+                    if (link.route === "/profile") link.route = `${link.route}/${userId}`;
 
                     return (
                         <Link href={link.route} key={link.label}
