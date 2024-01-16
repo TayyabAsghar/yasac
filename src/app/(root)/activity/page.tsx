@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { currentUser } from '@clerk/nextjs';
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
+import { currentUser } from '@clerk/nextjs';
 import { fetchUser, getActivity } from '@/lib/actions/user.actions';
 
 export default async function Page() {

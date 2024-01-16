@@ -1,14 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 type Props = {
     id: string;
     name: string;
-    username: string;
     imgUrl: string;
+    username: string;
     personType: string;
 };
 

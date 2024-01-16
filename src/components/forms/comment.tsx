@@ -1,16 +1,15 @@
-"use client";
+'use client';
 
-import { z } from "zod";
-import Image from "next/image";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { usePathname } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CommentValidation } from "@/lib/validations/comment";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-
-import { addCommentToThread } from "@/lib/actions/thread.actions";
+import { z } from 'zod';
+import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CommentValidation } from '@/lib/validations/comment';
+import { addCommentToThread } from '@/lib/actions/thread.actions';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 
 type Props = {
     threadId: string;

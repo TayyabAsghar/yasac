@@ -53,6 +53,7 @@ export async function fetchThread(pageNumber = 1, pageSize = 20) {
 export async function createThread(thread: ThreadData) {
     try {
         connectToDB();
+
         const communityIdObject = await Community.findOne(
             { id: thread.communityId },
             { _id: 1 }
@@ -189,6 +190,7 @@ export async function fetchThreadById(threadId: string) {
 export async function addCommentToThread(threadId: string, commentText: string, userId: string, path: string) {
     try {
         connectToDB();
+
         // Find the original thread by its ID
         const originalThread = await Thread.findById(threadId);
 

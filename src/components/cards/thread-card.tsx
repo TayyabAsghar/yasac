@@ -1,9 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatDateString } from '@/lib/utils';
-import DeleteThread from '../forms/delete-thread';
 import { ThreadCard } from '@/core/types/thread-card';
-
+import DeleteThread from '@/components/forms/delete-thread';
 
 export default function ThreadCard(threadData: ThreadCard) {
     return (
@@ -85,8 +84,7 @@ export default function ThreadCard(threadData: ThreadCard) {
                         {threadData.community && ` - ${threadData.community.name} Community`}
                     </p>
 
-                    <Image src={threadData.community.image} alt={threadData.community.name}
-                        width={14} height={14}
+                    <Image src={threadData.community.image} alt={threadData.community.name} width={14} height={14}
                         className='ml-1 rounded-full object-cover' />
                 </Link>
             )}

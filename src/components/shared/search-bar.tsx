@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { Input } from '../ui/input';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
 
 type Props = {
     routeType: string;
@@ -29,7 +29,7 @@ export default function SearchBar({ routeType }: Props) {
         <div className='search-bar'>
             <Image src='/assets/search-gray.svg' alt='search' width={24} height={24}
                 className='object-contain' />
-            <Input id='text' value={search} onChange={(e) => setSearch(e.target.value)}
+            <Input id='text' value={search} onChange={e => setSearch(e.target.value)}
                 placeholder={`${routeType !== '/search' ? 'Search communities' : 'Search creators'}`}
                 className='no-focus search-bar-input' />
         </div>
