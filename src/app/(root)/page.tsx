@@ -10,7 +10,7 @@ export default async function Home({ searchParams, }: { searchParams: { [key: st
   if (!user) return null;
 
   const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!userInfo?.onboarded) redirect('/onboarding');
 
   const result = await fetchThread(searchParams.page ? +searchParams.page : 1, 30);
 
@@ -40,7 +40,7 @@ export default async function Home({ searchParams, }: { searchParams: { [key: st
         )}
       </section>
 
-      <Pagination path='/' pageNumber={searchParams?.page ? +searchParams.page : 1}
+      <Pagination path='/home' pageNumber={searchParams?.page ? +searchParams.page : 1}
         isNext={result.isNext} />
     </>
   );

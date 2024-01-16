@@ -18,11 +18,10 @@ export default function DeleteThread({ threadId, currentUserId, authorId, parent
 
     const handleDeleteThread = async () => {
         await deleteThread(JSON.parse(threadId), pathname);
-        if (!parentId || !isComment)
-            router.push('/');
+        if (!parentId || !isComment) router.push('/home');
     };
 
-    if (currentUserId !== authorId || pathname === '/') return null;
+    if (currentUserId !== authorId || pathname === '/home') return null;
 
     return (
         <Image src='/assets/delete.svg' alt='delete' width={18} height={18}

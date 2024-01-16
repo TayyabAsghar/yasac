@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { dark } from "@clerk/themes";
+import { dark } from '@clerk/themes';
 import { OrganizationSwitcher, SignOutButton, SignedIn } from '@clerk/nextjs';
 
 export default function Header() {
     return (
         <nav className='header'>
-            <Link href='/' className='flex item-center gap-4'>
+            <Link href='/home' className='flex items-center gap-4'>
                 <Image src='/assets/logo.svg' alt='logo' width={28} height={28} />
                 <p className='text-heading3-bold text-light-1 max-xs:hidden'>YASAC</p>
             </Link>
@@ -21,13 +21,12 @@ export default function Header() {
                         </SignOutButton>
                     </SignedIn>
                 </div>
-                <OrganizationSwitcher
-                    appearance={{
-                        baseTheme: dark,
-                        elements: {
-                            organizationSwitcherTrigger: "py-2 px-4",
-                        }
-                    }} />
+                <OrganizationSwitcher appearance={{
+                    baseTheme: dark,
+                    elements: {
+                        organizationSwitcherTrigger: 'py-2 px-4',
+                    }
+                }} />
             </div>
         </nav>
     );

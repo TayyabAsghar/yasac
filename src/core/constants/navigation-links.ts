@@ -1,6 +1,6 @@
 export const SiderLinks = [{
     label: 'Home',
-    route: '/',
+    route: '/home',
     imgURL: '/assets/home.svg'
 }, {
     label: 'Search',

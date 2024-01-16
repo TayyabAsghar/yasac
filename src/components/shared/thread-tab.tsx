@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import ThreadCard from '../cards/thread-card';
+import ThreadCard from '@/components/cards/thread-card';
 import { ThreadsObject } from '@/core/types/thread-data';
 import { fetchUserThreads } from '@/lib/actions/user.actions';
 import { fetchCommunityThreads } from '@/lib/actions/community.actions';
@@ -19,7 +19,7 @@ export default async function ThreadsTab({ currentUserId, accountId, accountType
         result = await fetchUserThreads(accountId);
 
 
-    if (!result) redirect('/');
+    if (!result) redirect('/home');
 
     return (
         <section className='mt-9 flex flex-col gap-10'>
