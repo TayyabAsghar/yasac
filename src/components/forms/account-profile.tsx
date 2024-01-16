@@ -14,7 +14,7 @@ import { updateUser } from '@/lib/actions/user.actions';
 import { usePathname, useRouter } from 'next/navigation';
 import { UserValidations } from '@/lib/validations/user';
 import { DBUserData, UserData } from '@/core/types/user-data';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 type Props = {
     user: UserData;
@@ -101,6 +101,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                             <Input className='account-form-image-input' type='file' accept='image/*' placeholder='Upload a photo'
                                 onChange={e => handleImage(e, field.onChange)} />
                         </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )} />
 
@@ -110,6 +111,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                         <FormControl>
                             <Input className='account-form-input no-focus' type='text' placeholder='Name' {...field} />
                         </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )} />
 
@@ -119,6 +121,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                         <FormControl>
                             <Input className='account-form-input no-focus' type='text' placeholder='Username' {...field} />
                         </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )} />
 
@@ -129,6 +132,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                             <Textarea className='account-form-input no-focus' rows={10} {...field}
                                 placeholder='Tell people about yourself' />
                         </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )} />
                 <Button className='bg-primary-500' type='submit'>{btnTitle}</Button>
