@@ -40,8 +40,10 @@ export default function CommunityCard({ id, name, username, imgUrl, bio, members
                 {members.length > 0 && (
                     <div className='flex items-center'>
                         {members.map((member, index) => (
-                            <Image key={index} src={member.image} alt={`User ${index}`} width={28} height={28}
-                                className={`${index !== 0 && '-ml-2'} rounded-full object-cover`} />
+                            <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
+                                <Image src={member.image} alt={`User ${index}`} layout='fill' objectFit='cover'
+                                    className='rounded-full' />
+                            </div>
                         ))}
                         {members.length > 3 && (
                             <p className='ml-1 text-subtle-medium text-gray-1'>

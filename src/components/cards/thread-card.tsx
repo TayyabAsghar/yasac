@@ -15,7 +15,7 @@ export default function ThreadCard(threadData: ThreadCard) {
                             <Image src={threadData.author.image} alt='User Community Image' fill
                                 className='cursor-pointer rounded-full' />
                         </Link>
-                        <div className='thread-card_bar' />
+                        <div className='thread-card-bar' />
                     </div>
 
                     <div className='flex w-full flex-col'>
@@ -64,9 +64,10 @@ export default function ThreadCard(threadData: ThreadCard) {
             {!threadData.isComment && threadData.comments.length > 0 && (
                 <div className='ml-1 mt-3 flex items-center gap-2'>
                     {threadData.comments.slice(0, 2).map((comment, index) => (
-                        <Image key={index} src={comment.author.image}
-                            alt={`user_${index}`} width={24} height={24}
-                            className={`${index !== 0 && '-ml-5'} rounded-full object-cover`} />
+                        <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
+                            <Image src={comment.author.image} alt={`User ${index}`} layout='fill' objectFit='cover'
+                                className='rounded-full' />
+                        </div>
                     ))}
 
                     <Link href={`/thread/${threadData.id}`}>

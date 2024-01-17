@@ -25,7 +25,7 @@ export default function UserCard({ id, name, username, imgUrl, personType }: Pro
 
     return (
         <article className='user-card'>
-            <div className='user-card_avatar'>
+            <div className='user-card-avatar'>
                 <div className='relative h-12 w-12'>
                     <Image src={imgUrl} alt='User Logo' fill
                         className='rounded-full object-cover' />
