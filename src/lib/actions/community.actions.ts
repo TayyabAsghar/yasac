@@ -190,7 +190,6 @@ export async function removeUserFromCommunity(userId: string, communityId: strin
 
         return { success: true };
     } catch (error: any) {
-        console.error('Error removing user from community:', error);
         throw new Error(`Error removing user from community: ${error.message}`);
     }
 }
