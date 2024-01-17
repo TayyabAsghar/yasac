@@ -1,9 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { dark } from '@clerk/themes';
+import { useRouter } from 'next/navigation';
 import { OrganizationSwitcher, SignOutButton, SignedIn } from '@clerk/nextjs';
 
 export default function Header() {
+    const router = useRouter();
+
     return (
         <nav className='header'>
             <Link href='/home' className='flex items-center gap-4'>
@@ -14,7 +19,7 @@ export default function Header() {
             <div className='flex items-center gap-1'>
                 <div className='block md:hidden'>
                     <SignedIn>
-                        <SignOutButton>
+                        <SignOutButton signOutCallback={() => router.push('/sign-in')}>
                             <div className='flex cursor-pointer'>
                                 <Image src='/assets/logout.svg' alt='logout' width={24} height={24} />
                             </div>
