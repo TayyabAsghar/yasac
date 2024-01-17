@@ -30,7 +30,7 @@ export default function SearchBar({ routeType }: Props) {
             <Image src='/assets/search-gray.svg' alt='search' width={24} height={24}
                 className='object-contain' />
             <Input id='text' value={search} onChange={e => setSearch(e.target.value)}
-                placeholder={`${routeType !== '/search' ? 'Search communities' : 'Search creators'}`}
+                placeholder={`${routeType !== 'search' ? 'Search communities' : 'Search creators'}`}
                 className='no-focus search-bar-input' />
         </div>
     );
