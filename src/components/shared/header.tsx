@@ -12,7 +12,7 @@ export default function Header() {
     return (
         <nav className='header'>
             <Link href='/home' className='flex items-center gap-4'>
-                <Image src='/assets/logo.svg' alt='logo' width={28} height={28} />
+                <Image src='/assets/logo.svg' alt='Logo' width={28} height={28} />
                 <p className='text-heading3-bold text-light-1 max-xs:hidden'>YASAC</p>
             </Link>
 
@@ -21,7 +21,7 @@ export default function Header() {
                     <SignedIn>
                         <SignOutButton signOutCallback={() => router.push('/sign-in')}>
                             <div className='flex cursor-pointer'>
-                                <Image src='/assets/logout.svg' alt='logout' width={24} height={24} />
+                                <Image src='/assets/logout.svg' alt='Logout' width={24} height={24} />
                             </div>
                         </SignOutButton>
                     </SignedIn>
