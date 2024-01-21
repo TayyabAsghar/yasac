@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                     <TabsList className='tab'>
                         {ProfileTabs.map((tab) => (
                             <TabsTrigger key={tab.label} value={tab.value} className='tab'>
-                                <Image src={tab.icon} alt={tab.label} width={24} height={24}
+                                <Image src={tab.icon} alt={tab.label} title={tab.label} width={24} height={24}
                                     className='object-contain' />
                                 <p className='max-sm:hidden'>{tab.label}</p>
 
@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                         ))}
                     </TabsList>
                     {ProfileTabs.map((tab) => (
-                        <TabsContent key={`content-${tab.label}`} value={tab.value}
+                        <TabsContent key={`content-${tab.label}`} value={tab.value} title={tab.label}
                             className='w-full text-light-1'>
                             <ThreadsTab currentUserId={user.id} accountId={userInfo.id} accountType='User' />
                         </TabsContent>

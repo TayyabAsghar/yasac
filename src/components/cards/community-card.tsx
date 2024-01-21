@@ -18,7 +18,7 @@ export default function CommunityCard({ id, name, username, imgUrl, bio, members
         <article className='community-card'>
             <div className='flex flex-wrap items-center gap-3'>
                 <Link href={`/communities/${id}`} className='relative h-12 w-12'>
-                    <Image src={imgUrl} alt='Community Logo' fill
+                    <Image src={imgUrl} alt='Community Logo' title='Community Logo' fill
                         className='rounded-full object-cover' />
                 </Link>
 
@@ -41,7 +41,7 @@ export default function CommunityCard({ id, name, username, imgUrl, bio, members
                     <div className='flex items-center'>
                         {members.map((member, index) => (
                             <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
-                                <Image src={member.image} alt={`User ${index}`} layout='fill' objectFit='cover'
+                                <Image src={member.image} alt={`User ${index}`} title='Member Image' layout='fill' objectFit='cover'
                                     className='rounded-full' />
                             </div>
                         ))}

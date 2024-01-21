@@ -13,21 +13,23 @@ type Props = {
 };
 
 export default function UserCard({ id, name, username, imgUrl, personType }: Props) {
+    let imageDisc = '';
     const router = useRouter();
     const isCommunity = personType === 'Community';
 
+    if (isCommunity) imageDisc = 'Community Logo';
+    else imageDisc = 'Profile Photo';
+
     const handleClick = () => {
-        if (isCommunity)
-            router.push(`/communities/${id}`);
-        else
-            router.push(`/profile/${id}`);
+        if (isCommunity) router.push(`/communities/${id}`);
+        else router.push(`/profile/${id}`);
     };
 
     return (
         <article className='user-card'>
             <div className='user-card-avatar'>
                 <div className='relative h-12 w-12'>
-                    <Image src={imgUrl} alt='User Logo' fill
+                    <Image src={imgUrl} alt={imageDisc} title={imageDisc} fill
                         className='rounded-full object-cover' />
                 </div>
 

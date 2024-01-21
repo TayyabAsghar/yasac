@@ -92,9 +92,9 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                     <FormItem className='flex items-center gap-4'>
                         <FormLabel className='account-form-image-label'>
                             {field.value ?
-                                <Image src={field.value} alt='Profile Photo' width={96} height={96}
+                                <Image src={field.value} alt='Profile Photo' title='Profile Photo' width={96} height={96}
                                     className='rounded-full object-contains' priority />
-                                : <Image src='/assets/profile.svg' alt='Profile Photo' width={24} height={24}
+                                : <Image src='/assets/profile.svg' alt='Profile Photo' title='Profile Photo' width={24} height={24}
                                     className='object-contains' />}
                         </FormLabel>
                         <FormControl className='flex-1 text-base-semibold text-gray-200'>

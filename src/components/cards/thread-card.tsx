@@ -13,7 +13,7 @@ export default function ThreadCard(threadData: ThreadCard) {
                 <div className='flex w-full flex-1 flex-row gap-4'>
                     <div className='flex flex-col items-center'>
                         <Link href={`/profile/${threadData.author.id}`} className='relative h-11 w-11'>
-                            <Image src={threadData.author.image} alt='User Community Image' fill
+                            <Image src={threadData.author.image} alt='Profile Photo' title='Profile Photo' fill
                                 className='cursor-pointer rounded-full' />
                         </Link>
                         <div className='thread-card-bar' />
@@ -33,12 +33,12 @@ export default function ThreadCard(threadData: ThreadCard) {
                                 <ToggleHeart threadId={threadData.id.toString()} userId={threadData.currentUserId} isLiked={threadData.isLiked}
                                     likesCount={threadData.likesCount} />
                                 <Link href={`/thread/${threadData.id}`}>
-                                    <Image src='/assets/reply.svg' alt='Replay' width={24} height={24}
+                                    <Image src='/assets/reply.svg' alt='Replay' title='Replay' width={24} height={24}
                                         className='cursor-pointer object-contain' />
                                 </Link>
-                                <Image src='/assets/repost.svg' alt='Repost' width={24} height={24}
+                                <Image src='/assets/repost.svg' alt='Repost' title='Repost' width={24} height={24}
                                     className='cursor-pointer object-contain' />
-                                <Image src='/assets/share.svg' alt='Share' width={24} height={24}
+                                <Image src='/assets/share.svg' alt='Share' title='Share' width={24} height={24}
                                     className='cursor-pointer object-contain' />
                             </div>
 
@@ -66,7 +66,7 @@ export default function ThreadCard(threadData: ThreadCard) {
                 <div className='ml-1 mt-3 flex items-center gap-2'>
                     {threadData.comments.slice(0, 2).map((comment, index) => (
                         <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
-                            <Image src={comment.author.image} alt={`User ${index}`} layout='fill' objectFit='cover'
+                            <Image src={comment.author.image} alt={`User ${index}`} title='Profile Photo' layout='fill' objectFit='cover'
                                 className='rounded-full' />
                         </div>
                     ))}
@@ -86,8 +86,8 @@ export default function ThreadCard(threadData: ThreadCard) {
                         {threadData.community && ` - ${threadData.community.name} Community`}
                     </p>
 
-                    <Image src={threadData.community.image} alt={threadData.community.name} width={14} height={14}
-                        className='ml-1 rounded-full object-cover' />
+                    <Image src={threadData.community.image} alt={threadData.community.name} title={threadData.community.name}
+                        width={14} height={14} className='ml-1 rounded-full object-cover' />
                 </Link>
             )}
         </article>

@@ -42,7 +42,7 @@ export default function Comment(commentData: Props) {
                 <FormField control={form.control} name='thread' render={({ field }) => (
                     <FormItem className='flex w-full items-center gap-3'>
                         <FormLabel>
-                            <Image src={commentData.currentUserImg} alt='Current User' width={48} height={48}
+                            <Image src={commentData.currentUserImg} alt='User Profile' title='User Profile' width={48} height={48}
                                 className='rounded-full object-cover' />
                         </FormLabel>
                         <FormControl className='border-none bg-transparent'>

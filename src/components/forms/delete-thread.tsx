@@ -24,7 +24,7 @@ export default function DeleteThread({ threadId, currentUserId, authorId, parent
     if (currentUserId !== authorId || pathname === '/home') return null;
 
     return (
-        <Image src='/assets/delete.svg' alt='Delete' width={18} height={18}
+        <Image src='/assets/delete.svg' alt='Delete' title='Delete' width={18} height={18}
             className='cursor-pointer object-contain'
             onClick={async () => await handleDeleteThread()} />
     );

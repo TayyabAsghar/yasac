@@ -29,10 +29,10 @@ export default function ToggleHeart(props: Props) {
         <>
             <div onClick={async () => await toggleLike()} className='flex gap-1'>
                 {state.isLiked ?
-                    <Image src='/assets/heart-filled.svg' alt='Heart' width={24} height={24}
+                    <Image src='/assets/heart-filled.svg' alt='Like' title='Like' width={24} height={24}
                         className='cursor-pointer object-contain' />
                     :
-                    <Image src='/assets/heart-gray.svg' alt='Heart' width={24} height={24}
+                    <Image src='/assets/heart-gray.svg' alt='Like' title='Like' width={24} height={24}
                         className='cursor-pointer object-contain' />
                 }
                 {state.likesCount > 0 && (
