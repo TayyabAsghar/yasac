@@ -12,6 +12,8 @@ export type ThreadCard = {
         };
     }[];
     isComment?: boolean;
+    likesCount: number;
+    isLiked: boolean;
 };
 
 type author = {

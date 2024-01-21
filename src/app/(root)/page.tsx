@@ -12,7 +12,7 @@ export default async function Home({ searchParams, }: { searchParams: { [key: st
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect('/onboarding');
 
-  const result = await fetchThread(searchParams.page ? +searchParams.page : 1, 30);
+  const result = await fetchThread(userInfo._id, searchParams.page ? +searchParams.page : 1, 30);
 
   return (
     <>
@@ -27,13 +27,15 @@ export default async function Home({ searchParams, }: { searchParams: { [key: st
               <ThreadCard
                 key={post._id}
                 id={post._id}
-                currentUserId={user.id}
+                currentUserId={userInfo._id.toString()}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}
                 community={post.community}
                 createdAt={post.createdAt}
                 comments={post.children}
+                likesCount={post.likesCount}
+                isLiked={post.isLiked}
               />
             ))}
           </>

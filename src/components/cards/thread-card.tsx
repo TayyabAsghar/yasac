@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDateString } from '@/lib/utils';
+import ToggleHeart from '../shared/toggle-heart';
 import { ThreadCard } from '@/core/types/thread-card';
 import DeleteThread from '@/components/forms/delete-thread';
 
@@ -29,8 +30,8 @@ export default function ThreadCard(threadData: ThreadCard) {
 
                         <div className={`${threadData.isComment && 'mb-10'} mt-5 flex flex-col gap-3`}>
                             <div className='flex gap-3.5'>
-                                <Image src='/assets/heart-gray.svg' alt='Heart' width={24} height={24}
-                                    className='cursor-pointer object-contain' />
+                                <ToggleHeart threadId={threadData.id.toString()} userId={threadData.currentUserId} isLiked={threadData.isLiked}
+                                    likesCount={threadData.likesCount} />
                                 <Link href={`/thread/${threadData.id}`}>
                                     <Image src='/assets/reply.svg' alt='Replay' width={24} height={24}
                                         className='cursor-pointer object-contain' />
@@ -53,7 +54,7 @@ export default function ThreadCard(threadData: ThreadCard) {
                 </div>
 
                 <DeleteThread
-                    threadId={JSON.stringify(threadData.id)}
+                    threadId={threadData.id.toString()}
                     currentUserId={threadData.currentUserId}
                     authorId={threadData.author.id}
                     parentId={threadData.parentId}

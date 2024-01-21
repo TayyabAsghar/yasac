@@ -7,8 +7,7 @@ import Thread from '../models/thread.model';
 import Community from '../models/community.model';
 import { ThreadData } from '@/core/types/thread-data';
 
-
-export async function fetchThread(pageNumber = 1, pageSize = 20) {
+export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20) {
     try {
         connectToDB();
 
@@ -21,18 +20,20 @@ export async function fetchThread(pageNumber = 1, pageSize = 20) {
             .populate({
                 path: 'author',
                 model: User
-            })
-            .populate({
+            }).populate({
                 path: 'community',
                 model: Community
-            })
-            .populate({
+            }).populate({
                 path: 'children', // Populate the children field
                 populate: {
                     path: 'author', // Populate the author field within children
                     model: User,
                     select: '_id name parentId image' // Select only _id and username fields of the author
                 }
+            }).populate({
+                path: 'likes', // Populate the likes field
+                model: User,
+                select: '_id' // Select only _id field of the user
             });
 
         // Count the total number of top-level posts (threads) i.e., threads that are not comments.
@@ -40,7 +41,13 @@ export async function fetchThread(pageNumber = 1, pageSize = 20) {
             parentId: { $in: [null, undefined] }
         }); // Get the total count of posts
 
-        const posts = await postsQuery.exec();
+        const postList = await postsQuery.exec();
+
+        const posts = postList.map(post => ({
+            ...post._doc,
+            likesCount: post.likes.length,
+            isLiked: post.likes.some((like: { _id: { toString: () => any; }; }) => like._id.toString() === userId.toString())
+        }));
 
         const isNext = totalPostsCount > skipAmount + posts.length;
 
@@ -60,9 +67,10 @@ export async function createThread(thread: ThreadData) {
         );
 
         const createdThread = await Thread.create({
+            likes: [],
             text: thread.text,
             author: thread.author,
-            community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
+            community: communityIdObject // Assign communityId if provided, or leave it null for personal account
         });
 
         // Update User model
@@ -151,10 +159,11 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     }
 }
 
-export async function fetchThreadById(threadId: string) {
+export async function fetchThreadById(threadId: string, userId: string) {
     try {
         connectToDB();
-        const thread = await Thread.findById(threadId)
+
+        const threadData = await Thread.findById(threadId)
             .populate({
                 path: 'author',
                 model: User,
@@ -178,7 +187,17 @@ export async function fetchThreadById(threadId: string) {
                         select: '_id id name parentId image' // Select only _id and username fields of the author
                     }
                 }]
+            }).populate({
+                path: 'likes', // Populate the likes field
+                model: User,
+                select: '_id' // Select only _id field of the user
             }).exec();
+
+        const thread = threadData.map((data: any) => ({
+            ...data._doc,
+            likesCount: data.likes.length,
+            isLiked: data.likes.some((like: { _id: { toString: () => string; }; }) => like._id.toString() === userId.toString()),
+        }));
 
         return thread;
     } catch (error: any) {
@@ -193,24 +212,43 @@ export async function addCommentToThread(threadId: string, commentText: string, 
         // Find the original thread by its ID
         const originalThread = await Thread.findById(threadId);
 
-        if (!originalThread) {
-            throw new Error('Thread not found');
-        }
+        if (!originalThread) throw new Error('Thread not found');
 
         // Create the new comment thread
-        const commentThread = new Thread({ text: commentText, author: userId, parentId: threadId });
+        const commentThread = new Thread({ text: commentText, author: userId, parentId: threadId, likes: [userId] });
 
         // Save the comment thread to the database
         const savedCommentThread = await commentThread.save();
 
-        // Add the comment thread's ID to the original thread's children array
-        originalThread.children.push(savedCommentThread._id);
-
-        // Save the updated original thread to the database
-        await originalThread.save();
+        // Update the original thread in the database
+        await Thread.findByIdAndUpdate(threadId, { $push: { children: savedCommentThread._id } });
 
         revalidatePath(path);
     } catch (error: any) {
         throw new Error(`Error while adding comment: ${error.message}`);
+    }
+}
+
+export async function likeThread(threadId: string, userId: string) {
+    try {
+        connectToDB();
+        await Thread.updateOne(
+            { _id: threadId, likes: { $ne: userId } },
+            { $addToSet: { likes: userId } }
+        );
+    } catch (error: any) {
+        throw new Error(`Error while liking thread: ${error.message}`);
+    }
+}
+
+export async function removeLike(threadId: string, userId: string) {
+    try {
+        connectToDB();
+        await Thread.updateOne(
+            { _id: threadId },
+            { $pull: { likes: userId } }
+        );
+    } catch (error: any) {
+        throw new Error(`Error while liking thread: ${error.message}`);
     }
 }

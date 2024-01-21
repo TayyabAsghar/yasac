@@ -16,20 +16,22 @@ export default async function page({ params }: { params: { id: string; }; }) {
     const userInfo = await fetchUser(user.id);
     if (!userInfo?.onboarded) redirect('/onboarding');
 
-    const thread = await fetchThreadById(params.id);
+    const thread = await fetchThreadById(params.id, userInfo._id);
 
     return (
         <section className='relative'>
             <div>
                 <ThreadCard
                     id={thread._id}
-                    currentUserId={user.id}
+                    currentUserId={userInfo._id.toString()}
                     parentId={thread.parentId}
                     content={thread.text}
                     author={thread.author}
                     community={thread.community}
                     createdAt={thread.createdAt}
                     comments={thread.children}
+                    likesCount={thread.likesCount}
+                    isLiked={thread.isLiked}
                 />
             </div>
 
@@ -46,13 +48,15 @@ export default async function page({ params }: { params: { id: string; }; }) {
                     <ThreadCard
                         key={childItem._id}
                         id={childItem._id}
-                        currentUserId={user.id}
+                        currentUserId={userInfo._id.toString()}
                         parentId={childItem.parentId}
                         content={childItem.text}
                         author={childItem.author}
                         community={childItem.community}
                         createdAt={childItem.createdAt}
                         comments={childItem.children}
+                        likesCount={childItem.likesCount}
+                        isLiked={childItem.isLiked}
                         isComment
                     />
                 ))}

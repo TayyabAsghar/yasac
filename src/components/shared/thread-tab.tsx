@@ -46,6 +46,8 @@ export default async function ThreadsTab({ currentUserId, accountId, accountType
                     }
                     createdAt={thread.createdAt}
                     comments={thread.children}
+                    likesCount={12}
+                    isLiked={true}
                 />
             ))}
         </section>
