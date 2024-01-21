@@ -29,5 +29,7 @@ export type ThreadsObject = {
                 image: string;
             };
         }[];
+        likesCount: number;
+        isLiked: boolean;
     }[];
 };
