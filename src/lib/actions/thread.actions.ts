@@ -4,6 +4,7 @@ import User from '../models/user.model';
 import { connectToDB } from '../mongoose';
 import { revalidatePath } from 'next/cache';
 import Thread from '../models/thread.model';
+import { Types, startSession } from 'mongoose';
 import Community from '../models/community.model';
 import { ThreadData } from '@/core/types/thread-data';
 
@@ -28,7 +29,7 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
                 populate: {
                     path: 'author', // Populate the author field within children
                     model: User,
-                    select: '_id name parentId image' // Select only _id and username fields of the author
+                    select: '_id name parentId image'
                 }
             }).populate({
                 path: 'likes', // Populate the likes field
@@ -58,8 +59,12 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
 }
 
 export async function createThread(thread: ThreadData) {
+    const session = await startSession();
+
     try {
         connectToDB();
+
+        session.startTransaction();
 
         const communityIdObject = await Community.findOne(
             { id: thread.communityId },
@@ -67,52 +72,70 @@ export async function createThread(thread: ThreadData) {
         );
 
         const createdThread = await Thread.create({
-            likes: [],
             text: thread.text,
             author: thread.author,
             community: communityIdObject // Assign communityId if provided, or leave it null for personal account
         });
 
-        // Update User model
-        await User.findByIdAndUpdate(thread.author, {
-            $push: { threads: createdThread._id },
-        });
-
-        if (communityIdObject) {
-            // Update Community model
-            await Community.findByIdAndUpdate(communityIdObject, {
+        // Update User and Community models concurrently
+        const updatePromises = [
+            User.findByIdAndUpdate(thread.author, {
                 $push: { threads: createdThread._id },
-            });
-        }
+            }),
+            communityIdObject && Community.findByIdAndUpdate(communityIdObject, {
+                $push: { threads: createdThread._id }
+            })
+        ];
+
+        await Promise.all(updatePromises);
+        await session.commitTransaction();
 
         revalidatePath(thread.path);
     } catch (error: any) {
+        if (session.inTransaction()) await session.abortTransaction();
         throw new Error(`Failed to create thread: ${error.message}`);
+    } finally {
+        session.endSession();
     }
 }
 
 async function fetchAllChildThreads(threadId: string): Promise<any[]> {
-    const childThreads = await Thread.find({ parentId: threadId });
+    const threads = await Thread.aggregate([{
+        $match: { _id: new Types.ObjectId(threadId) }
+    }, {
+        $graphLookup: {
+            from: 'threads',
+            startWith: '$_id',
+            connectFromField: '_id',
+            connectToField: 'parentId',
+            as: 'descendantThreads'
+        }
+    }, {
+        $unwind: '$descendantThreads'
+    }, {
+        $sort: { 'descendantThreads.createdAt': -1 }
+    }, {
+        $group: {
+            _id: '$_id',
+            descendantThreads: { $push: '$descendantThreads' }
+        }
+    }]);
 
-    const descendantThreads = [];
-    for (const childThread of childThreads) {
-        const descendants = await fetchAllChildThreads(childThread._id);
-        descendantThreads.push(childThread, ...descendants);
-    }
-
-    return descendantThreads;
+    return threads[0].descendantThreads;
 }
 
 export async function deleteThread(id: string, path: string): Promise<void> {
+    const session = await startSession();
+
     try {
         connectToDB();
+
+        session.startTransaction();
 
         // Find the thread to be deleted (the main thread)
         const mainThread = await Thread.findById(id).populate('author community');
 
-        if (!mainThread) {
-            throw new Error('Thread not found');
-        }
+        if (!mainThread) throw new Error('Thread not found');
 
         // Fetch all child threads and their descendants recursively
         const descendantThreads = await fetchAllChildThreads(id);
@@ -138,24 +161,28 @@ export async function deleteThread(id: string, path: string): Promise<void> {
             ].filter((id) => id !== undefined)
         );
 
-        // Recursively delete child threads and their descendants
-        await Thread.deleteMany({ _id: { $in: descendantThreadIds } });
+        // Delete threads and update User and Community models concurrently
+        const deleteAndUpdatePromises = [
+            Thread.deleteMany({ _id: { $in: descendantThreadIds } }),
+            User.updateMany(
+                { _id: { $in: Array.from(uniqueAuthorIds) } },
+                { $pull: { threads: { $in: descendantThreadIds } } }
+            ),
+            Community.updateMany(
+                { _id: { $in: Array.from(uniqueCommunityIds) } },
+                { $pull: { threads: { $in: descendantThreadIds } } }
+            )
+        ];
 
-        // Update User model
-        await User.updateMany(
-            { _id: { $in: Array.from(uniqueAuthorIds) } },
-            { $pull: { threads: { $in: descendantThreadIds } } }
-        );
-
-        // Update Community model
-        await Community.updateMany(
-            { _id: { $in: Array.from(uniqueCommunityIds) } },
-            { $pull: { threads: { $in: descendantThreadIds } } }
-        );
+        await Promise.all(deleteAndUpdatePromises);
+        await session.commitTransaction();
 
         revalidatePath(path);
     } catch (error: any) {
+        if (session.inTransaction()) await session.abortTransaction();
         throw new Error(`Failed to delete thread: ${error.message}`);
+    } finally {
+        session.endSession();
     }
 }
 
@@ -191,13 +218,13 @@ export async function fetchThreadById(threadId: string, userId: string) {
                 path: 'likes', // Populate the likes field
                 model: User,
                 select: '_id' // Select only _id field of the user
-            }).exec();
+            });
 
-        const thread = threadData.map((data: any) => ({
-            ...data._doc,
-            likesCount: data.likes.length,
-            isLiked: data.likes.some((like: { _id: { toString: () => string; }; }) => like._id.toString() === userId.toString()),
-        }));
+        const thread = {
+            ...threadData._doc,
+            likesCount: threadData.likes.length,
+            isLiked: threadData.likes.some((like: { _id: { toString: () => string; }; }) => like._id.toString() === userId.toString()),
+        };
 
         return thread;
     } catch (error: any) {
