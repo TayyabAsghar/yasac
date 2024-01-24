@@ -15,3 +15,9 @@ export type CommunityListOptions = {
     pageNumber: number;
     searchString: string;
 };
+
+export type community = {
+    id: string;
+    name: string;
+    image: string;
+};

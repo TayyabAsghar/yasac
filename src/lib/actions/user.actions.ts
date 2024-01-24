@@ -142,4 +142,3 @@ export async function getActivity(userId: string) {
         throw new Error(`Error fetching replies: ${error.message}`);
     }
 }
-

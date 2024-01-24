@@ -1,3 +1,6 @@
+import { author } from './user-data';
+import { community } from './community-data';
+
 export type ThreadCard = {
     id: string;
     currentUserId: string;
@@ -14,16 +17,4 @@ export type ThreadCard = {
     isComment?: boolean;
     likesCount: number;
     isLiked: boolean;
-};
-
-type author = {
-    name: string;
-    image: string;
-    id: string;
-};
-
-type community = {
-    id: string;
-    name: string;
-    image: string;
 };

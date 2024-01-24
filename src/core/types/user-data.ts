@@ -25,3 +25,10 @@ export type UserListOptions = {
     pageSize: number;
     sortBy: SortOrder;
 };
+
+
+export type author = {
+    name: string;
+    image: string;
+    id: string;
+};

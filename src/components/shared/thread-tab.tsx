@@ -7,14 +7,14 @@ import { fetchCommunityThreads } from '@/lib/actions/community.actions';
 type Props = {
     currentUserId: string;
     accountId: string;
-    accountType: string;
+    accountType: 'User' | 'Community';
 };
 
 export default async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
     let result: ThreadsObject;
 
     if (accountType === 'Community')
-        result = await fetchCommunityThreads(accountId);
+        result = await fetchCommunityThreads(accountId, currentUserId);
     else
         result = await fetchUserThreads(accountId);
 
