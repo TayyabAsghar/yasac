@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from '@/components/shared/header';
 import Footer from '@/components/shared/footer';
+import { Toaster } from '@/components/ui/toaster';
 import LeftSider from '@/components/shared/left-sider';
 import RightSider from '@/components/shared/right-sider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -35,6 +36,7 @@ export default function RootLayout({
             </section>
             <RightSider />
           </main>
+          <Toaster />
           <Footer />
         </body>
       </html>

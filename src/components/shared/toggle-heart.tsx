@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { formatNumber } from '@/lib/utils';
 import { useState } from 'react';
+import { formatNumber } from '@/lib/utils';
+import { useToast } from '../ui/use-toast';
 import { likeThread, removeLike } from '@/lib/actions/thread.actions';
 
 type Props = {
@@ -13,15 +14,24 @@ type Props = {
 };
 
 export default function ToggleHeart(props: Props) {
+    const { toast } = useToast();
     const [state, setState] = useState({ isLiked: props.isLiked, likesCount: props.likesCount });
 
     const toggleLike = async () => {
-        if (!state.isLiked) {
-            setState({ isLiked: !state.isLiked, likesCount: state.likesCount + 1 });
-            await likeThread(props.threadId, props.userId);
-        } else {
-            setState({ isLiked: !state.isLiked, likesCount: state.likesCount - 1 });
-            await removeLike(props.threadId, props.userId);
+        try {
+            if (!state.isLiked) {
+                setState({ isLiked: !state.isLiked, likesCount: state.likesCount + 1 });
+                await likeThread(props.threadId, props.userId);
+            } else {
+                setState({ isLiked: !state.isLiked, likesCount: state.likesCount - 1 });
+                await removeLike(props.threadId, props.userId);
+            }
+        } catch {
+            toast({
+                variant: 'destructive',
+                description: 'There was an error liking the Thread.'
+            });
+            setState({ isLiked: state.isLiked, likesCount: state.likesCount + (state.isLiked ? 1 : -1) });
         }
     };
 
@@ -36,9 +46,9 @@ export default function ToggleHeart(props: Props) {
                         className='cursor-pointer object-contain' />
                 }
                 {state.likesCount > 0 && (
-                    < span className=' text-gray-1'>{formatNumber(state.likesCount)}</span>
+                    <span className='text-gray-1'>{formatNumber(state.likesCount)}</span>
                 )}
-            </div >
+            </div>
         </>
     );
 }

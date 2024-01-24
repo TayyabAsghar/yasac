@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { dark } from '@clerk/themes';
 import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
+import { Toaster } from '@/components/ui/toaster';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
                     <div className='w-full flex justify-center items-center min-h-screen'>
                         {children}
                         <SpeedInsights />
+                        <Toaster />
                     </div>
                 </body>
             </html>
