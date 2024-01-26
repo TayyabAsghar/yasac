@@ -135,7 +135,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
                         <FormMessage />
                     </FormItem>
                 )} />
-                <Button className='bg-primary-500' type='submit'>{btnTitle}</Button>
+                <Button className='bg-primary-500 hover:bg-secondary-500' type='submit'>{btnTitle}</Button>
             </form>
         </Form >
     );

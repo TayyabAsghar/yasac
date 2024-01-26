@@ -209,7 +209,7 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
         "primary-500": "#877EFF",
-        "secondary-500": "#FFB620",
+        "secondary-500": "#A78BFA",
         blue: "#0095F6",
         "logout-btn": "#FF5A5A",
         "navbar-menu": "rgba(16, 16, 18, 0.6)",

@@ -20,7 +20,7 @@ export default function LeftSider() {
 
                     return (
                         <Link href={link.route} key={link.label}
-                            className={`left-sider-link ${isActive && 'bg-primary-500 '}`} >
+                            className={`left-sider-link ${isActive ? 'bg-primary-500' : 'hover:bg-secondary-500'}`} >
                             <Image src={link.imgURL} alt={link.label} title={link.label} width={24} height={24} />
                             <p className='text-light-1 max-lg:hidden'>{link.label}</p>
                         </Link>

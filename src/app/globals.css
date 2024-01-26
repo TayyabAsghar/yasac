@@ -103,7 +103,7 @@
   }
 
   .community-card-btn {
-    @apply rounded-lg bg-primary-500 px-5 py-1.5 text-small-regular !text-light-1 !important;
+    @apply rounded-lg bg-primary-500 hover:bg-secondary-500 px-5 py-1.5 text-small-regular !text-light-1 !important;
   }
 
   /* thread card  */
@@ -121,7 +121,7 @@
   }
 
   .user-card-btn {
-    @apply h-auto min-w-[74px] rounded-lg bg-primary-500 text-[12px] text-light-1 !important;
+    @apply h-auto min-w-[74px] rounded-lg bg-primary-500 hover:bg-secondary-500 text-[12px] text-light-1 !important;
   }
 
   .search-bar {
@@ -229,5 +229,5 @@
 }
 
 .comment-form-btn {
-  @apply rounded-3xl bg-primary-500 px-8 py-2 !text-small-regular text-light-1 max-xs:w-full !important;
+  @apply rounded-3xl bg-primary-500  hover:bg-secondary-500 px-8 py-2 !text-small-regular text-light-1 max-xs:w-full !important;
 }

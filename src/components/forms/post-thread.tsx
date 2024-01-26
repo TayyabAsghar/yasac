@@ -60,7 +60,7 @@ export default function PostThread({ userId }: Props) {
                             <FormMessage />
                         </FormItem>
                     )} />
-                <Button type='submit' className='bg-primary-500'>Post Thread</Button>
+                <Button type='submit' className='bg-primary-500 hover:bg-secondary-500'>Post Thread</Button>
             </form>
         </Form>
     );
