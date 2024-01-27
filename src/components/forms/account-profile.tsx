@@ -21,7 +21,7 @@ type Props = {
     btnTitle: string;
 };
 
-export default function AccountProfile({ user, btnTitle }: Props) {
+const AccountProfile = ({ user, btnTitle }: Props) => {
     const router = useRouter();
     const pathname = usePathname();
     const [files, setFiles] = useState<File[]>([]);
@@ -76,11 +76,8 @@ export default function AccountProfile({ user, btnTitle }: Props) {
 
         await updateUser(userData);
 
-        if (pathname === '/profile/edit') {
-            router.back();
-        } else {
-            router.push('/home');
-        }
+        if (pathname === '/profile/edit') router.back();
+        else router.push('/home');
     };
 
     return (
@@ -140,3 +137,5 @@ export default function AccountProfile({ user, btnTitle }: Props) {
         </Form >
     );
 };
+
+export default AccountProfile;

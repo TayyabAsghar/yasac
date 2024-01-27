@@ -4,7 +4,7 @@ import { UserData } from '@/core/types/user-data';
 import { fetchUser } from '@/lib/actions/user.actions';
 import AccountProfile from '@/components/forms/account-profile';
 
-export default async function Page() {
+const Page = async () => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -29,4 +29,6 @@ export default async function Page() {
             </section>
         </>
     );
-}
+};
+
+export default Page;

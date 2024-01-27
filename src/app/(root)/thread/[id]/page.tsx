@@ -5,9 +5,7 @@ import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadCard from '@/components/cards/thread-card';
 import { fetchThreadById } from '@/lib/actions/thread.actions';
 
-export const revalidate = 0;
-
-export default async function page({ params }: { params: { id: string; }; }) {
+const Page = async ({ params }: { params: { id: string; }; }) => {
     if (!params.id) return null;
 
     const user = await currentUser();
@@ -63,4 +61,6 @@ export default async function page({ params }: { params: { id: string; }; }) {
             </div>
         </section>
     );
-}
+};
+
+export default Page;

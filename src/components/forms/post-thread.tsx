@@ -16,7 +16,7 @@ type Props = {
     userId: string;
 };
 
-export default function PostThread({ userId }: Props) {
+const PostThread = ({ userId }: Props) => {
     const router = useRouter();
     const pathname = usePathname();
     const { organization } = useOrganization();
@@ -38,7 +38,6 @@ export default function PostThread({ userId }: Props) {
         };
 
         await createThread(thread);
-
         router.push('/home');
     };
 
@@ -64,4 +63,6 @@ export default function PostThread({ userId }: Props) {
             </form>
         </Form>
     );
-}
+};
+
+export default PostThread;

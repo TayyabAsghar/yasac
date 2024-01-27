@@ -9,17 +9,15 @@ type Props = {
     routeType: string;
 };
 
-export default function SearchBar({ routeType }: Props) {
+const SearchBar = ({ routeType }: Props) => {
     const router = useRouter();
     const [search, setSearch] = useState('');
 
     // query after 0.3s of no input
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            if (search)
-                router.push(`/${routeType}?q=` + search);
-            else
-                router.push(`/${routeType}`);
+            if (search) router.push(`/${routeType}?q=` + search);
+            else router.push(`/${routeType}`);
         }, 300);
 
         return () => clearTimeout(delayDebounceFn);
@@ -34,4 +32,6 @@ export default function SearchBar({ routeType }: Props) {
                 className='no-focus search-bar-input' />
         </div>
     );
-}
+};
+
+export default SearchBar;

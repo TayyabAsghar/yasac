@@ -12,7 +12,7 @@ interface Props {
     isComment?: boolean;
 }
 
-export default function DeleteThread({ threadId, currentUserId, authorId, parentId, isComment }: Props) {
+const DeleteThread = ({ threadId, currentUserId, authorId, parentId, isComment }: Props) => {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -28,4 +28,6 @@ export default function DeleteThread({ threadId, currentUserId, authorId, parent
             className='cursor-pointer object-contain'
             onClick={async () => await handleDeleteThread()} />
     );
-}
+};
+
+export default DeleteThread;

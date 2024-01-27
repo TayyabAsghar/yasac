@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs';
 import { fetchUser, getActivity } from '@/lib/actions/user.actions';
 
-export default async function Page() {
+const Page = async () => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -41,4 +41,6 @@ export default async function Page() {
             </section>
         </>
     );
-}
+};
+
+export default Page;

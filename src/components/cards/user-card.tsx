@@ -12,7 +12,7 @@ type Props = {
     personType: string;
 };
 
-export default function UserCard({ id, name, username, imgUrl, personType }: Props) {
+const UserCard = ({ id, name, username, imgUrl, personType }: Props) => {
     let imageDisc = '';
     const router = useRouter();
     const isCommunity = personType === 'Community';
@@ -42,4 +42,6 @@ export default function UserCard({ id, name, username, imgUrl, personType }: Pro
             <Button className='user-card-btn' onClick={() => handleClick()}>View</Button>
         </article>
     );
-}
+};
+
+export default UserCard;

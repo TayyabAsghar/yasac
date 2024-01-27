@@ -5,7 +5,7 @@ import SearchBar from '@/components/shared/search-bar';
 import Pagination from '@/components/shared/pagination';
 import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
 
-export default async function Page({ searchParams }: { searchParams: { [key: string]: string | undefined; }; }) {
+const Page = async ({ searchParams }: { searchParams: { [key: string]: string | undefined; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -42,4 +42,6 @@ export default async function Page({ searchParams }: { searchParams: { [key: str
             <Pagination path='search' pageNumber={searchParams?.page ? +searchParams.page : 1} isNext={result.isNext} />
         </section>
     );
-}
+};
+
+export default Page;

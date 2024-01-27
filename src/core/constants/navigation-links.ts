@@ -20,7 +20,7 @@ export const SiderLinks = [{
     imgURL: '/assets/community.svg'
 }, {
     route: '/profile',
-    label: 'Profiles',
+    label: 'Profile',
     imgURL: '/assets/user.svg'
 }];
 

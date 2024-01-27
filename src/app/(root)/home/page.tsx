@@ -5,7 +5,7 @@ import ThreadCard from '@/components/cards/thread-card';
 import Pagination from '@/components/shared/pagination';
 import { fetchThread } from '@/lib/actions/thread.actions';
 
-export default async function Page({ searchParams, }: { searchParams: { [key: string]: string | undefined; }; }) {
+const Page = async ({ searchParams, }: { searchParams: { [key: string]: string | undefined; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -46,4 +46,6 @@ export default async function Page({ searchParams, }: { searchParams: { [key: st
                 isNext={result.isNext} />
         </>
     );
-}
+};
+
+export default Page;

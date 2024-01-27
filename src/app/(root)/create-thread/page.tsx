@@ -3,7 +3,7 @@ import { currentUser } from '@clerk/nextjs';
 import { fetchUser } from '@/lib/actions/user.actions';
 import PostThread from '@/components/forms/post-thread';
 
-export default async function Page() {
+const Page = async () => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -16,4 +16,6 @@ export default async function Page() {
             <PostThread userId={userInfo._id.toString()} />
         </>
     );
-}
+};
+
+export default Page;

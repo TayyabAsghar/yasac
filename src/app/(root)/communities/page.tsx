@@ -7,7 +7,7 @@ import CommunityCard from '@/components/cards/community-card';
 import { fetchCommunities } from '@/lib/actions/community.actions';
 import { CommunityListOptions } from '@/core/types/community-data';
 
-export default async function Page({ searchParams }: { searchParams: { [key: string]: string | undefined; }; }) {
+const Page = async ({ searchParams }: { searchParams: { [key: string]: string | undefined; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -58,4 +58,6 @@ export default async function Page({ searchParams }: { searchParams: { [key: str
             />
         </>
     );
-}
+};
+
+export default Page;

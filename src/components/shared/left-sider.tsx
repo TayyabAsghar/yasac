@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SiderLinks } from '@/core/constants/navigation-links';
 import { SignedIn, SignOutButton, useAuth } from '@clerk/nextjs';
 
-export default function LeftSider() {
+const LeftSider = () => {
     const router = useRouter();
     const { userId } = useAuth();
     const pathname = usePathname();
@@ -39,4 +39,6 @@ export default function LeftSider() {
             </div>
         </section>
     );
-}
+};
+
+export default LeftSider;

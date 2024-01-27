@@ -5,7 +5,7 @@ import { UserListOptions } from '@/core/types/user-data';
 import { CommunityListOptions } from '@/core/types/community-data';
 import { fetchCommunities } from '@/lib/actions/community.actions';
 
-export default async function RightSider() {
+const RightSider = async () => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -77,4 +77,6 @@ export default async function RightSider() {
             </div>
         </section>
     );
-}
+};
+
+export default RightSider;

@@ -6,7 +6,7 @@ import { dark } from '@clerk/themes';
 import { useRouter } from 'next/navigation';
 import { OrganizationSwitcher, SignOutButton, SignedIn } from '@clerk/nextjs';
 
-export default function Header() {
+const Header = () => {
     const router = useRouter();
 
     return (
@@ -35,4 +35,6 @@ export default function Header() {
             </div>
         </nav>
     );
-}
+};
+
+export default Header;

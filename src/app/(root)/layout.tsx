@@ -16,11 +16,7 @@ export const metadata: Metadata = {
   description: 'Yet Another Social App Clone built on Next.js',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = ({ children }: { children: React.ReactNode; }) => {
   return (
     <ClerkProvider>
       <html lang='en'>
@@ -42,4 +38,6 @@ export default function RootLayout({
       </html>
     </ClerkProvider>
   );
-}
+};
+
+export default RootLayout;

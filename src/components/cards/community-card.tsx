@@ -13,7 +13,7 @@ type Props = {
     }[];
 };
 
-export default function CommunityCard({ id, name, username, imgUrl, bio, members }: Props) {
+const CommunityCard = ({ id, name, username, imgUrl, bio, members }: Props) => {
     return (
         <article className='community-card'>
             <div className='flex flex-wrap items-center gap-3'>
@@ -55,4 +55,6 @@ export default function CommunityCard({ id, name, username, imgUrl, bio, members
             </div>
         </article>
     );
-}
+};
+
+export default CommunityCard;

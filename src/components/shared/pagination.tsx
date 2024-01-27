@@ -9,22 +9,19 @@ type Props = {
     path: string;
 };
 
-export default function Pagination({ pageNumber, isNext, path }: Props) {
+const Pagination = ({ pageNumber, isNext, path }: Props) => {
     const router = useRouter();
 
     const handleNavigation = (type: string) => {
         let nextPageNumber = pageNumber;
 
-        if (type === 'prev') {
+        if (type === 'prev')
             nextPageNumber = Math.max(1, pageNumber - 1);
-        } else if (type === 'next') {
+        else if (type === 'next')
             nextPageNumber = pageNumber + 1;
-        }
 
-        if (nextPageNumber > 1)
-            router.push(`/${path}?page=${nextPageNumber}`);
-        else
-            router.push(`/${path}`);
+        if (nextPageNumber > 1) router.push(`/${path}?page=${nextPageNumber}`);
+        else router.push(`/${path}`);
 
     };
 
@@ -43,4 +40,6 @@ export default function Pagination({ pageNumber, isNext, path }: Props) {
             </Button>
         </div>
     );
-}
+};
+
+export default Pagination;

@@ -5,7 +5,7 @@ import ToggleHeart from '../shared/toggle-heart';
 import { ThreadCard } from '@/core/types/thread-card';
 import DeleteThread from '@/components/forms/delete-thread';
 
-export default function ThreadCard(threadData: ThreadCard) {
+const ThreadCard = (threadData: ThreadCard) => {
     return (
         <article
             className={`flex w-full flex-col rounded-xl ${threadData.isComment ? 'px-0 xs:px-7' : 'bg-dark-2 p-7'}`}>
@@ -92,4 +92,6 @@ export default function ThreadCard(threadData: ThreadCard) {
             )}
         </article>
     );
-}
+};
+
+export default ThreadCard;

@@ -13,7 +13,7 @@ type Props = {
     isLiked: boolean;
 };
 
-export default function ToggleHeart(props: Props) {
+const ToggleHeart = (props: Props) => {
     const { toast } = useToast();
     const [state, setState] = useState({ isLiked: props.isLiked, likesCount: props.likesCount });
 
@@ -51,4 +51,6 @@ export default function ToggleHeart(props: Props) {
             </div>
         </>
     );
-}
+};
+
+export default ToggleHeart;

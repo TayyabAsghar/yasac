@@ -7,8 +7,7 @@ import ProfileHeader from '@/components/shared/profile-header';
 import { ProfileTabs } from '@/core/constants/navigation-links';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-
-export default async function Page({ params }: { params: { id: string; }; }) {
+const Page = async ({ params }: { params: { id: string; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
@@ -53,4 +52,6 @@ export default async function Page({ params }: { params: { id: string; }; }) {
             </div>
         </section>
     );
-}
+};
+
+export default Page;

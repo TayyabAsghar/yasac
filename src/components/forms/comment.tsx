@@ -17,7 +17,7 @@ type Props = {
     currentUserId: string;
 };
 
-export default function Comment(commentData: Props) {
+const Comment = (commentData: Props) => {
     const pathname = usePathname();
 
     const form = useForm({
@@ -57,4 +57,6 @@ export default function Comment(commentData: Props) {
             </form>
         </Form>
     );
-}
+};
+
+export default Comment;

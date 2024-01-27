@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { SiderLinks } from '@/core/constants/navigation-links';
 
-export default function Footer() {
+const Footer = () => {
     const pathname = usePathname();
 
     return (
@@ -26,4 +26,6 @@ export default function Footer() {
             </div>
         </section>
     );
-}
+};
+
+export default Footer;

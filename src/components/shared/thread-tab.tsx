@@ -10,7 +10,7 @@ type Props = {
     accountType: 'User' | 'Community';
 };
 
-export default async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
+const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
     let result: ThreadsObject;
 
     if (accountType === 'Community')
@@ -52,4 +52,6 @@ export default async function ThreadsTab({ currentUserId, accountId, accountType
             ))}
         </section>
     );
-}
+};
+
+export default ThreadsTab;
