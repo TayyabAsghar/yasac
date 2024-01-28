@@ -30,6 +30,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
                     comments={thread.children}
                     likesCount={thread.likesCount}
                     isLiked={thread.isLiked}
+                    isComment={false}
                 />
             </div>
 
@@ -55,7 +56,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
                         comments={childItem.children}
                         likesCount={childItem.likesCount}
                         isLiked={childItem.isLiked}
-                        isComment
+                        isComment={true}
                     />
                 ))}
             </div>

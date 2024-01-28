@@ -5,6 +5,7 @@ import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadsTab from '@/components/shared/thread-tab';
 import ProfileHeader from '@/components/shared/profile-header';
 import { ProfileTabs } from '@/core/constants/navigation-links';
+import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Page = async ({ params }: { params: { id: string; }; }) => {
@@ -13,6 +14,8 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
 
     const userInfo = await fetchUser(params.id);
     if (!userInfo?.onboarded) redirect('/onboarding');
+
+    const threadCount = await fetchUserThreadsCount(userInfo._id);
 
     return (
         <section>
@@ -36,7 +39,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
 
                                 {tab.label === 'Threads' && (
                                     <p className='ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2'>
-                                        {userInfo.threads.length}
+                                        {threadCount}
                                     </p>
                                 )}
                             </TabsTrigger>

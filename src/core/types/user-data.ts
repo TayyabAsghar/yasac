@@ -26,9 +26,3 @@ export type UserListOptions = {
     sortBy: SortOrder;
 };
 
-
-export type author = {
-    name: string;
-    image: string;
-    id: string;
-};

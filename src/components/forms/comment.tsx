@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 import Image from 'next/image';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { usePathname } from 'next/navigation';
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CommentValidation } from '@/lib/validations/comment';
 import { addCommentToThread } from '@/lib/actions/thread.actions';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 
 type Props = {
     threadId: string;
@@ -19,11 +20,17 @@ type Props = {
 
 const Comment = (commentData: Props) => {
     const pathname = usePathname();
+    const [disabled, setDisabled] = useState(true);
 
     const form = useForm({
         resolver: zodResolver(CommentValidation),
         defaultValues: { thread: '' }
     });
+
+    const changeInput = (event: React.KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement; }) => {
+        form.setValue('thread', event.target.value);
+        setDisabled(event.target.value === '');
+    };
 
     const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
         await addCommentToThread(
@@ -46,14 +53,13 @@ const Comment = (commentData: Props) => {
                                 className='rounded-full object-cover' />
                         </FormLabel>
                         <FormControl className='border-none bg-transparent'>
-                            <Input type='text' {...field} placeholder='Comment...'
+                            <Input type='text' {...field} placeholder='Comment...' onChange={changeInput}
                                 className='no-focus text-light-1 outline-none' />
                         </FormControl>
-                        <FormMessage />
                     </FormItem>
                 )} />
 
-                <Button type='submit' className='comment-form-btn'>Reply</Button>
+                <Button type='submit' className='comment-form-btn' disabled={disabled}>Reply</Button>
             </form>
         </Form>
     );

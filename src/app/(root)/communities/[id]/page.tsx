@@ -6,12 +6,14 @@ import ProfileHeader from '@/components/shared/profile-header';
 import { CommunityTabs } from '@/core/constants/navigation-links';
 import { fetchCommunityDetails } from '@/lib/actions/community.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 
 const Page = async ({ params }: { params: { id: string; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
     const communityDetails = await fetchCommunityDetails(params.id);
+    const threadCount = await fetchUserThreadsCount(communityDetails._id);
 
     return (
         <section>
@@ -36,7 +38,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
 
                                 {tab.label === 'Threads' && (
                                     <p className='ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2'>
-                                        {communityDetails.threads.length}
+                                        {threadCount}
                                     </p>
                                 )}
                             </TabsTrigger>

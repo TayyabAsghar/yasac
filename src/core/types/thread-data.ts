@@ -1,4 +1,3 @@
-import { author } from './user-data';
 import { community } from './community-data';
 
 export type ThreadData = {
@@ -6,6 +5,19 @@ export type ThreadData = {
     author: string,
     communityId: string | null,
     path: string,
+};
+
+export type ThreadAuthor = {
+    name: string;
+    image: string;
+    id: string;
+};
+
+export type ThreadComments = {
+    author: {
+        image: string;
+        username: string;
+    };
 };
 
 export type ThreadsObject = {
@@ -16,14 +28,10 @@ export type ThreadsObject = {
         _id: string;
         text: string;
         parentId: string | null;
-        author: author;
+        author: ThreadAuthor;
         community: community | null;
         createdAt: string;
-        children: {
-            author: {
-                image: string;
-            };
-        }[];
+        children: ThreadComments[];
         likesCount: number;
         isLiked: boolean;
     }[];

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatDateString } from '@/lib/utils';
 import ToggleHeart from '../shared/toggle-heart';
+import RepliedProfiles from '../ui/replied-profiles';
 import { ThreadCard } from '@/core/types/thread-card';
 import DeleteThread from '@/components/forms/delete-thread';
 
@@ -42,13 +43,7 @@ const ThreadCard = (threadData: ThreadCard) => {
                                     className='cursor-pointer object-contain' />
                             </div>
 
-                            {threadData.isComment && threadData.comments.length > 0 && (
-                                <Link href={`/thread/${threadData.id}`}>
-                                    <p className='mt-1 text-subtle-medium text-gray-1'>
-                                        {threadData.comments.length} repl{threadData.comments.length > 1 ? 'ies' : 'y'}
-                                    </p>
-                                </Link>
-                            )}
+                            {threadData.isComment && threadData.comments.length > 0 && <RepliedProfiles {...threadData} />}
                         </div>
                     </div>
                 </div>
@@ -62,22 +57,7 @@ const ThreadCard = (threadData: ThreadCard) => {
                 />
             </div>
 
-            {!threadData.isComment && threadData.comments.length > 0 && (
-                <div className='ml-1 mt-3 flex items-center gap-2'>
-                    {threadData.comments.slice(0, 2).map((comment, index) => (
-                        <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
-                            <Image src={comment.author.image} alt={`User ${index}`} title='Profile Photo' layout='fill' objectFit='cover'
-                                className='rounded-full' />
-                        </div>
-                    ))}
-
-                    <Link href={`/thread/${threadData.id}`}>
-                        <p className='mt-1 text-subtle-medium text-gray-1'>
-                            {threadData.comments.length} repl{threadData.comments.length > 1 ? 'ies' : 'y'}
-                        </p>
-                    </Link>
-                </div>
-            )}
+            {!threadData.isComment && threadData.comments.length > 0 && <RepliedProfiles {...threadData} />}
 
             {!threadData.isComment && threadData.community && (
                 <Link href={`/communities/${threadData.community.id}`} className='mt-5 flex items-center'>

@@ -36,6 +36,7 @@ const Page = async ({ searchParams, }: { searchParams: { [key: string]: string |
                                 comments={post.children}
                                 likesCount={post.likesCount}
                                 isLiked={post.isLiked}
+                                isComment={false}
                             />
                         ))}
                     </>

@@ -1,6 +1,7 @@
 'use client';
 
 import * as z from 'zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOrganization } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ const PostThread = ({ userId }: Props) => {
     const router = useRouter();
     const pathname = usePathname();
     const { organization } = useOrganization();
+    const [disabled, setDisabled] = useState(true);
 
     const form = useForm({
         resolver: zodResolver(ThreadValidations),
@@ -28,6 +30,11 @@ const PostThread = ({ userId }: Props) => {
             accountId: userId,
         }
     });
+
+    const handleChange = (event: React.KeyboardEvent<HTMLTextAreaElement> & { target: HTMLTextAreaElement; }) => {
+        form.setValue('thread', event.target.value);
+        setDisabled(event.target.value === '');
+    };
 
     const onSubmit = async (values: z.infer<typeof ThreadValidations>) => {
         const thread: ThreadData = {
@@ -54,12 +61,12 @@ const PostThread = ({ userId }: Props) => {
                                 Content
                             </FormLabel>
                             <FormControl className='no-focus border border-dark-4 bg-dark-3 text-light-1'>
-                                <Textarea rows={15} {...field} />
+                                <Textarea rows={15} {...field} onChange={handleChange} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )} />
-                <Button type='submit' className='bg-primary-500 hover:bg-secondary-500'>Post Thread</Button>
+                <Button type='submit' className='bg-primary-500 hover:bg-secondary-500' disabled={disabled}>Post Thread</Button>
             </form>
         </Form>
     );

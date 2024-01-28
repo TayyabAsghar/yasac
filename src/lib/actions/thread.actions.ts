@@ -29,7 +29,7 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
                 populate: {
                     path: 'author', // Populate the author field within children
                     model: User,
-                    select: '_id name parentId image'
+                    select: '_id name parentId image username'
                 }
             }).populate({
                 path: 'likes', // Populate the likes field
@@ -194,7 +194,7 @@ export async function fetchThreadById(threadId: string, userId: string) {
             .populate({
                 path: 'author',
                 model: User,
-                select: '_id id name image',
+                select: '_id id name image username',
             }).populate({  // Populate the author field with _id and username
                 path: 'community',
                 // model: Community,
@@ -204,14 +204,14 @@ export async function fetchThreadById(threadId: string, userId: string) {
                 populate: [{
                     path: 'author', // Populate the author field within children
                     model: User,
-                    select: '_id id name parentId image' // Select only _id and username fields of the author
+                    select: '_id id name parentId image username' // Select only _id and username fields of the author
                 }, {
                     path: 'children', // Populate the children field within children
                     model: Thread, // The model of the nested children (assuming it's the same 'Thread' model)
                     populate: {
                         path: 'author', // Populate the author field within nested children
                         model: User,
-                        select: '_id id name parentId image' // Select only _id and username fields of the author
+                        select: '_id id name parentId image username' // Select only _id and username fields of the author
                     }
                 }]
             }).populate({
@@ -232,6 +232,26 @@ export async function fetchThreadById(threadId: string, userId: string) {
     }
 }
 
+export async function fetchUserThreadsCount(communityId: string) {
+    try {
+        connectToDB();
+
+        return await Thread.countDocuments({ community: communityId, parentId: { $in: [null, undefined] } });
+    } catch (error: any) {
+        throw new Error(`Error fetching community threads count: ${error.message}`);
+    }
+}
+
+export async function fetchCommunityThreadsCount(userId: string) {
+    try {
+        connectToDB();
+
+        return await Thread.countDocuments({ author: userId, parentId: { $in: [null, undefined] } });
+    } catch (error: any) {
+        throw new Error(`Error fetching user threads count: ${error.message}`);
+    }
+}
+
 export async function addCommentToThread(threadId: string, commentText: string, userId: string, path: string) {
     try {
         connectToDB();
@@ -242,7 +262,7 @@ export async function addCommentToThread(threadId: string, commentText: string, 
         if (!originalThread) throw new Error('Thread not found');
 
         // Create the new comment thread
-        const commentThread = new Thread({ text: commentText, author: userId, parentId: threadId, likes: [userId] });
+        const commentThread = new Thread({ text: commentText, author: userId, parentId: new Types.ObjectId(threadId), likes: [userId] });
 
         // Save the comment thread to the database
         const savedCommentThread = await commentThread.save();

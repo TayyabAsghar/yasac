@@ -48,6 +48,7 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
                     comments={thread.children}
                     likesCount={thread.likesCount}
                     isLiked={thread.isLiked}
+                    isComment={false}
                 />
             ))}
         </section>
