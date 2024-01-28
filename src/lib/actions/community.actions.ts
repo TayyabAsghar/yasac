@@ -21,7 +21,7 @@ export async function createCommunity(communityData: CommunityData) {
         const newCommunity = new Community({
             id: communityData.id,
             name: communityData.name,
-            username: communityData.username,
+            slug: communityData.slug,
             image: communityData.image,
             bio: communityData.bio,
             createdBy: user._id
@@ -41,7 +41,7 @@ export async function fetchCommunityDetails(id: string) {
         const communityDetails = await Community.findOne({ id }).populate(['createdBy', {
             path: 'members',
             model: User,
-            select: 'name username image _id id',
+            select: 'name slug image _id id',
         }]);
 
         return communityDetails;
@@ -100,7 +100,7 @@ export async function fetchCommunities(options: CommunityListOptions) {
         // If the search string is not empty, add the $or operator to match either username or name fields.
         if (options.searchString.trim()) {
             query.$or = [
-                { username: { $regex: regex } },
+                { slug: { $regex: regex } },
                 { name: { $regex: regex } },
             ];
         }
@@ -216,14 +216,14 @@ export async function removeUserFromCommunity(userId: string, communityId: strin
     }
 }
 
-export async function updateCommunityInfo(communityId: string, name: string, username: string, image: string) {
+export async function updateCommunityInfo(communityId: string, name: string, slug: string, image: string) {
     try {
         connectToDB();
 
         // Find the community by its _id and update the information
         const updatedCommunity = await Community.findOneAndUpdate(
             { id: communityId },
-            { name, username, image },
+            { name, slug, image },
             { new: true }
         );
 

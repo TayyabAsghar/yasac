@@ -5,7 +5,7 @@ const communitySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    username: {
+    slug: {
         type: String,
         unique: true,
         required: true

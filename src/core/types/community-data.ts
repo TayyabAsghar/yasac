@@ -4,8 +4,8 @@ export type CommunityData = {
     id: string;
     bio: string;
     name: string;
+    slug: string;
     image: string;
-    username: string;
     createdById: string;
 };
 

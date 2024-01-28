@@ -43,7 +43,7 @@ export const POST = async (req: Request) => {
                 const communityData: CommunityData = {
                     id: id,
                     name: name,
-                    username: slug || '',
+                    slug: slug || '',
                     image: image_url,
                     bio: '',
                     createdById: created_by

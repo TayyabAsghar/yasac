@@ -7,13 +7,13 @@ type Props = {
     bio: string;
     name: string;
     imgUrl: string;
-    username: string;
+    slug: string;
     members: {
         image: string;
     }[];
 };
 
-const CommunityCard = ({ id, name, username, imgUrl, bio, members }: Props) => {
+const CommunityCard = ({ id, name, slug, imgUrl, bio, members }: Props) => {
     return (
         <article className='community-card'>
             <div className='flex flex-wrap items-center gap-3'>
@@ -26,7 +26,7 @@ const CommunityCard = ({ id, name, username, imgUrl, bio, members }: Props) => {
                     <Link href={`/communities/${id}`}>
                         <h4 className='text-base-semibold text-light-1'>{name}</h4>
                     </Link>
-                    <p className='text-small-medium text-gray-1'>@{username}</p>
+                    <p className='text-small-medium text-gray-1'>@{slug}</p>
                 </div>
             </div>
 
