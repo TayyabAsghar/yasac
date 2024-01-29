@@ -31,10 +31,6 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
                     model: User,
                     select: '_id name parentId image username'
                 }
-            }).populate({
-                path: 'likes', // Populate the likes field
-                model: User,
-                select: '_id' // Select only _id field of the user
             });
 
         // Count the total number of top-level posts (threads) i.e., threads that are not comments.
@@ -214,14 +210,15 @@ export async function fetchThreadById(threadId: string, userId: string) {
                         select: '_id id name parentId image username' // Select only _id and username fields of the author
                     }
                 }]
-            }).populate({
-                path: 'likes', // Populate the likes field
-                model: User,
-                select: '_id' // Select only _id field of the user
             });
 
         const thread = {
             ...threadData._doc,
+            children: threadData.children.map((child: { _doc: any; likes: { _id: { toString: () => string; }; }[]; }) => ({
+                ...child._doc,
+                likesCount: child.likes.length,
+                isLiked: child.likes.some((like: { _id: { toString: () => string; }; }) => like._id.toString() === userId.toString()),
+            })),
             likesCount: threadData.likes.length,
             isLiked: threadData.likes.some((like: { _id: { toString: () => string; }; }) => like._id.toString() === userId.toString()),
         };
@@ -232,7 +229,7 @@ export async function fetchThreadById(threadId: string, userId: string) {
     }
 }
 
-export async function fetchUserThreadsCount(communityId: string) {
+export async function fetchCommunityThreadsCount(communityId: string) {
     try {
         connectToDB();
 
@@ -242,7 +239,7 @@ export async function fetchUserThreadsCount(communityId: string) {
     }
 }
 
-export async function fetchCommunityThreadsCount(userId: string) {
+export async function fetchUserThreadsCount(userId: string) {
     try {
         connectToDB();
 
@@ -262,7 +259,7 @@ export async function addCommentToThread(threadId: string, commentText: string, 
         if (!originalThread) throw new Error('Thread not found');
 
         // Create the new comment thread
-        const commentThread = new Thread({ text: commentText, author: userId, parentId: new Types.ObjectId(threadId), likes: [userId] });
+        const commentThread = new Thread({ text: commentText, author: userId, parentId: new Types.ObjectId(threadId) });
 
         // Save the comment thread to the database
         const savedCommentThread = await commentThread.save();
