@@ -1,18 +1,18 @@
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs';
-import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadsTab from '@/components/shared/thread-tab';
+import { fetchUserByName } from '@/lib/actions/user.actions';
 import ProfileHeader from '@/components/shared/profile-header';
 import { ProfileTabs } from '@/core/constants/navigation-links';
 import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const Page = async ({ params }: { params: { id: string; }; }) => {
+const Page = async ({ params }: { params: { username: string; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
-    const userInfo = await fetchUser(params.id);
+    const userInfo = await fetchUserByName(params.username);
     if (!userInfo?.onboarded) redirect('/onboarding');
 
     const threadCount = await fetchUserThreadsCount(userInfo._id);
@@ -21,11 +21,12 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
         <section>
             <ProfileHeader
                 accountId={userInfo.id}
-                authUserId={user.id}
+                currentUser={user.id}
                 name={userInfo.name}
                 username={userInfo.username}
                 imgUrl={userInfo.image}
                 bio={userInfo.bio}
+                type='User'
             />
 
             <div className='mt-9'>

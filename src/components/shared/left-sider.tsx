@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { fetchUser } from '@/lib/actions/user.actions';
 import { usePathname, useRouter } from 'next/navigation';
 import { SiderLinks } from '@/core/constants/navigation-links';
 import { SignedIn, SignOutButton, useAuth } from '@clerk/nextjs';
@@ -10,16 +12,27 @@ const LeftSider = () => {
     const router = useRouter();
     const { userId } = useAuth();
     const pathname = usePathname();
+    const [username, setUsername] = useState('');
+
+    const fetchUserName = async () => {
+        const userInfo = await fetchUser(userId ?? '');
+        setUsername(userInfo.username);
+    };
+
+    useEffect(() => {
+        fetchUserName();
+    }, [username]);
 
     return (
         <section className='custom-scrollbar left-sider'>
             <div className='flex w-full flex-1 flex-col gap-6 px-6'>
                 {SiderLinks.map(link => {
-                    const isActive = (pathname.includes(link.route) && link.route.length > 1) || pathname === link.route;
-                    if (link.route === '/profile') link.route = `${link.route}/${userId}`;
+                    const isActive: boolean = (pathname.includes(link.route) && link.route.length > 1) || pathname === link.route;
+                    let route: string = link.route;
+                    if (route === '/profile') route = `${route}/${username}`;
 
                     return (
-                        <Link href={link.route} key={link.label}
+                        <Link href={route} key={link.label}
                             className={`left-sider-link ${isActive ? 'bg-primary-500' : 'hover:bg-secondary-500'}`} >
                             <Image src={link.imgURL} alt={link.label} title={link.label} width={24} height={24} />
                             <p className='text-light-1 max-lg:hidden'>{link.label}</p>

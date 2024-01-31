@@ -22,7 +22,7 @@ const UserCard = ({ id, name, username, imgUrl, personType }: Props) => {
 
     const handleClick = () => {
         if (isCommunity) router.push(`/communities/${id}`);
-        else router.push(`/profile/${id}`);
+        else router.push(`/profile/${username}`);
     };
 
     return (
