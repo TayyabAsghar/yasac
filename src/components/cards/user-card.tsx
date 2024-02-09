@@ -21,7 +21,7 @@ const UserCard = ({ id, name, username, imgUrl, personType }: Props) => {
     else imageDisc = 'Profile Photo';
 
     const handleClick = () => {
-        if (isCommunity) router.push(`/communities/${id}`);
+        if (isCommunity) router.push(`/communities/${username}`);
         else router.push(`/profile/${username}`);
     };
 

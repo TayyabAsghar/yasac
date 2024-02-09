@@ -60,7 +60,7 @@ const ThreadCard = (threadData: ThreadCard) => {
             {!threadData.isComment && threadData.comments.length > 0 && <RepliedProfiles {...threadData} />}
 
             {!threadData.isComment && threadData.community && (
-                <Link href={`/communities/${threadData.community.id}`} className='mt-5 flex items-center'>
+                <Link href={`/communities/${threadData.community.slug}`} className='mt-5 flex items-center'>
                     <p className='text-subtle-medium text-gray-1'>
                         {formatDateString(threadData.createdAt)}
                         {threadData.community && ` - ${threadData.community.name} Community`}

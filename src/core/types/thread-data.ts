@@ -24,6 +24,7 @@ export type ThreadsObject = {
     id: string;
     name: string;
     image: string;
+    slug?: string;
     threads: {
         _id: string;
         text: string;

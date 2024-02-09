@@ -1,8 +1,7 @@
-import { currentUser } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
 
 const LandingPage = async () => {
-  const user = await currentUser();
-  // if (!user) return null;
+  redirect('/home');
 
   return (
     <>

@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 type Props = {
-    id: string;
     bio: string;
     name: string;
     imgUrl: string;
@@ -13,17 +12,17 @@ type Props = {
     }[];
 };
 
-const CommunityCard = ({ id, name, slug, imgUrl, bio, members }: Props) => {
+const CommunityCard = ({ name, slug, imgUrl, bio, members }: Props) => {
     return (
         <article className='community-card'>
             <div className='flex flex-wrap items-center gap-3'>
-                <Link href={`/communities/${id}`} className='relative h-12 w-12'>
+                <Link href={`/communities/${slug}`} className='relative h-12 w-12'>
                     <Image src={imgUrl} alt='Community Logo' title='Community Logo' fill
                         className='rounded-full object-cover' />
                 </Link>
 
                 <div>
-                    <Link href={`/communities/${id}`}>
+                    <Link href={`/communities/${slug}`}>
                         <h4 className='text-base-semibold text-light-1'>{name}</h4>
                     </Link>
                     <p className='text-small-medium text-gray-1'>@{slug}</p>
@@ -33,7 +32,7 @@ const CommunityCard = ({ id, name, slug, imgUrl, bio, members }: Props) => {
             <p className='mt-4 text-subtle-medium text-gray-1'>{bio}</p>
 
             <div className='mt-5 flex flex-wrap items-center justify-between gap-3'>
-                <Link href={`/communities/${id}`}>
+                <Link href={`/communities/${slug}`}>
                     <Button size='sm' className='community-card-btn'>View</Button>
                 </Link>
 

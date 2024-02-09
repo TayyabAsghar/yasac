@@ -39,7 +39,6 @@ const Page = async ({ searchParams }: { searchParams: { [key: string]: string | 
                         {result.communities.map((community) => (
                             <CommunityCard
                                 key={community.id}
-                                id={community.id}
                                 name={community.name}
                                 slug={community.slug}
                                 imgUrl={community.image}

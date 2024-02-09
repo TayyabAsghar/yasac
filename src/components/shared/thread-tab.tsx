@@ -13,8 +13,9 @@ type Props = {
 const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
     let result: ThreadsObject;
 
-    if (accountType === 'Community')
+    if (accountType === 'Community') {
         result = await fetchCommunityThreads(accountId, currentUserId);
+    }
     else
         result = await fetchUserThreads(accountId);
 
@@ -41,7 +42,7 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
                     }
                     community={
                         accountType === 'Community'
-                            ? { name: result.name, id: result.id, image: result.image }
+                            ? { name: result.name, id: result.id, image: result.image, slug: result?.slug ?? '' }
                             : thread.community
                     }
                     createdAt={thread.createdAt}

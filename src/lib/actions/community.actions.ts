@@ -33,12 +33,11 @@ export async function createCommunity(communityData: CommunityData) {
     }
 }
 
-
-export async function fetchCommunityDetails(id: string) {
+export async function fetchCommunityDetails(slug: string) {
     try {
         connectToDB();
 
-        const communityDetails = await Community.findOne({ id }).populate(['createdBy', {
+        const communityDetails = await Community.findOne({ slug: slug }).populate(['createdBy', {
             path: 'members',
             model: User,
             select: 'name slug image _id id',
@@ -49,6 +48,25 @@ export async function fetchCommunityDetails(id: string) {
         throw new Error(`Error fetching community details: ${error.message}`);
     }
 }
+
+export async function getMembersAndPostCount(communityId: string): Promise<{ postsCount: number; membersCount: number; }> {
+    try {
+        connectToDB();
+
+        // Find the community by its ID
+        const community = await Community.findById(communityId);
+
+        if (!community) throw new Error('Community not found');
+
+        // Count the number of threads and members
+        const postsCount = await Community.countDocuments({ _id: community.threads });
+        const membersCount = await Community.countDocuments({ _id: community.members });
+
+        return { postsCount, membersCount };
+    } catch (error: any) {
+        throw new Error(`Error fetching community details: ${error.message}`);
+    }
+};
 
 export async function fetchCommunityThreads(id: string, userId: string): Promise<ThreadsObject> {
     try {

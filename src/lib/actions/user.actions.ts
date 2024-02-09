@@ -1,18 +1,31 @@
 'use server';
 
-import { FilterQuery } from 'mongoose';
-import User from '../models/user.model';
-import { connectToDB } from '../mongoose';
+import User from '@/lib/models/user.model';
+import { connectToDB } from '@/lib/mongoose';
 import { revalidatePath } from 'next/cache';
-import Thread from '../models/thread.model';
-import Community from '../models/community.model';
+import Thread from '@/lib/models/thread.model';
+import Community from '@/lib/models/community.model';
+import { FilterQuery, startSession } from 'mongoose';
 import { DBUserData, UserListOptions } from '@/core/types/user-data';
 
-export async function fetchUser(userId: string) {
+export async function fetchUser(userId: string): Promise<any> {
     try {
         connectToDB();
 
         return await User.findOne({ id: userId }).populate({
+            path: 'communities',
+            model: Community,
+        });
+    } catch (error: any) {
+        throw new Error(`Failed to fetch user: ${error.message}`);
+    }
+}
+
+export async function fetchUserByUsername(username: string): Promise<any> {
+    try {
+        connectToDB();
+
+        return await User.findOne({ username: username }).populate({
             path: 'communities',
             model: Community,
         });
@@ -37,15 +50,13 @@ export async function updateUser(user: DBUserData): Promise<void> {
             { upsert: true }
         );
 
-        if (user.path === '/profile/edit') {
-            revalidatePath(user.path);
-        }
+        if (user.path === '/profile/edit') revalidatePath(user.path);
     } catch (error: any) {
         throw new Error(`Failed to create/update user: ${error.message}`);
     }
 }
 
-export async function fetchUserThreads(userId: string) {
+export async function fetchUserThreads(userId: string): Promise<any> {
     try {
         connectToDB();
 
@@ -73,7 +84,7 @@ export async function fetchUserThreads(userId: string) {
     }
 }
 
-export async function fetchUsers(options: UserListOptions) {
+export async function fetchUsers(options: UserListOptions): Promise<{ users: any[]; isNext: boolean; }> {
     try {
         connectToDB();
 
@@ -140,5 +151,91 @@ export async function getActivity(userId: string) {
         return replies;
     } catch (error: any) {
         throw new Error(`Error fetching replies: ${error.message}`);
+    }
+}
+
+export async function isUserAFollower(userId: string, currentUserId: string): Promise<boolean> {
+    try {
+        connectToDB();
+
+        const follower = await User.exists({ _id: userId, followers: currentUserId });
+        return follower !== null;
+    } catch (error: any) {
+        throw new Error(`Error fetching is following: ${error.message}`);
+    }
+};
+
+export async function followUser(userId: string, currentUserId: string, path: string): Promise<void> {
+    const session = await startSession();
+
+    try {
+        session.startTransaction();
+        connectToDB();
+
+        const userUpdate1 = User.updateOne(
+            { _id: userId, followers: { $ne: currentUserId } },
+            { $addToSet: { followers: currentUserId } },
+            { session }
+        );
+
+        const userUpdate2 = await User.updateOne(
+            { _id: currentUserId, following: { $ne: userId } },
+            { $addToSet: { following: userId } },
+            { session }
+        );
+
+        await Promise.all([userUpdate1, userUpdate2]);
+        await session.commitTransaction();
+        revalidatePath(path);
+    } catch (error: any) {
+        if (session.inTransaction()) await session.abortTransaction();
+        throw new Error(`Error following the user: ${error.message}`);
+    } finally {
+        session.endSession();
+    }
+};
+
+export async function unFollowUser(userId: string, currentUserId: string, path: string): Promise<void> {
+    const session = await startSession();
+
+    try {
+        session.startTransaction();
+        connectToDB();
+
+        const userUpdate1 = User.updateOne(
+            { _id: userId },
+            { $pull: { followers: currentUserId } },
+            { session }
+        );
+
+        const userUpdate2 = await User.updateOne(
+            { _id: currentUserId },
+            { $pull: { followers: userId } },
+            { session }
+        );
+
+        await Promise.all([userUpdate1, userUpdate2]);
+        await session.commitTransaction();
+        revalidatePath(path);
+    } catch (error: any) {
+        if (session.inTransaction()) await session.abortTransaction();
+        throw new Error(`Error unFollowing the user: ${error.message}`);
+    } finally {
+        session.endSession();
+    }
+};
+
+export async function getSocialCount(userId: string): Promise<{ followersCount: number; followingCount: number; }> {
+    try {
+        connectToDB();
+        // Find the user by their ID
+        const user = await User.findOne({ _id: userId });
+
+        const followersCount: number = user.followers.length || 0;
+        const followingCount: number = user.following.length || 0;
+
+        return { followersCount, followingCount };
+    } catch (error: any) {
+        throw new Error(`Error fetching followers and following count: ${error.message}`);
     }
 }
