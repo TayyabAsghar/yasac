@@ -8,6 +8,7 @@ import { ChangeEvent, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useUploadThing } from '@/lib/uploadthing';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateUser } from '@/lib/actions/user.actions';
@@ -33,7 +34,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             bio: user.bio,
             name: user.name,
             username: user.username,
-            profilePhoto: user.image
+            profilePhoto: user.image,
+            private: user.private
         }
     });
 
@@ -65,7 +67,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             username: values.username,
             userId: user.id,
             bio: values.bio,
-            image: values.profilePhoto
+            image: values.profilePhoto,
+            private: values.private
         };
 
         if (hasImageChanged) {
@@ -121,6 +124,19 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                         <FormMessage />
                     </FormItem>
                 )} />
+
+                <FormField control={form.control} name="private"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                                <Checkbox className="account-form-input" checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <FormLabel className='text-base-semibold text-light-2'>
+                                Make account private
+                            </FormLabel>
+                        </FormItem>
+                    )}
+                />
 
                 <FormField control={form.control} name='bio' render={({ field }) => (
                     <FormItem className='flex flex-col gap-3 w-full'>

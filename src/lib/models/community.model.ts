@@ -1,4 +1,5 @@
 import { Schema, model, models } from 'mongoose';
+import { boolean } from 'zod';
 
 const communitySchema = new Schema({
     id: {
@@ -16,6 +17,10 @@ const communitySchema = new Schema({
     },
     image: String,
     bio: String,
+    private: {
+        type: Boolean,
+        default: false
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'

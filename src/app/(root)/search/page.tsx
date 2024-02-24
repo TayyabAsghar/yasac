@@ -15,7 +15,8 @@ const Page = async ({ searchParams }: { searchParams: { [key: string]: string | 
     const result = await fetchUsers({
         pageSize: 25,
         sortBy: 'asc',
-        userId: user.id,
+        userId: userInfo._id,
+        removeFollowed: false,
         searchString: searchParams.q ?? '',
         pageNumber: searchParams?.page ? + searchParams.page : 1
     });

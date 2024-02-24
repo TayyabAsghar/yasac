@@ -17,7 +17,8 @@ const Page = async () => {
         bio: userInfo ? userInfo?.bio : '',
         image: userInfo ? userInfo?.image : user.imageUrl,
         username: userInfo ? userInfo?.username : user.username,
-        name: userInfo ? userInfo?.name : `${user.firstName ?? ''} ${user.lastName ?? ''}`
+        name: userInfo ? userInfo?.name : `${user.firstName ?? ''} ${user.lastName ?? ''}`,
+        private: userInfo ? userInfo.private : false
     };
 
     return (

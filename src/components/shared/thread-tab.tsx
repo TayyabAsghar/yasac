@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import ThreadCard from '@/components/cards/thread-card';
 import { ThreadsObject } from '@/core/types/thread-data';
-import { fetchUserThreads } from '@/lib/actions/user.actions';
+import { fetchUserThreads, isPrivateUser, isUserAFollower } from '@/lib/actions/user.actions';
 import { fetchCommunityThreads } from '@/lib/actions/community.actions';
 
 type Props = {
@@ -11,14 +11,19 @@ type Props = {
 };
 
 const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
-    let result: ThreadsObject;
+    let result: ThreadsObject = {
+        id: '',
+        name: '',
+        image: '',
+        threads: []
+    };
 
     if (accountType === 'Community') {
         result = await fetchCommunityThreads(accountId, currentUserId);
+    } else {
+        if (currentUserId === accountId || !await isPrivateUser(accountId) || await isUserAFollower(accountId, currentUserId))
+            result = await fetchUserThreads(accountId);
     }
-    else
-        result = await fetchUserThreads(accountId);
-
 
     if (!result) redirect('/home');
 

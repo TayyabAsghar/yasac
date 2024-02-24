@@ -33,9 +33,9 @@ export const ProfileTabs = [{
     label: 'Replies',
     icon: '/assets/members.svg'
 }, {
-    value: 'tagged',
-    label: 'Tagged',
-    icon: '/assets/tag.svg'
+    value: 'following',
+    label: 'Following',
+    icon: '/assets/following.svg'
 }];
 
 export const CommunityTabs = [{

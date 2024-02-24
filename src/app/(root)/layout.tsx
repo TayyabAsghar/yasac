@@ -25,7 +25,7 @@ const RootLayout = ({ children }: { children: React.ReactNode; }) => {
           <main className='flex flex-row'>
             <LeftSider />
             <section className='main-container'>
-              <div className='w-full max-w-4xl'>
+              <div className='w-full h-full max-w-4xl'>
                 {children}
                 <SpeedInsights />
               </div>

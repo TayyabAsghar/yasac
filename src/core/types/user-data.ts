@@ -2,27 +2,30 @@ import { SortOrder } from 'mongoose';
 
 export type UserData = {
     id: string;
+    bio: string;
+    name: string;
+    image: string;
     objectId: string;
     username: string;
-    name: string;
-    bio: string;
-    image: string;
+    private: boolean;
 };
 
 export type DBUserData = {
-    userId: string;
-    username: string;
-    name: string;
     bio: string;
-    image: string;
+    name: string;
     path: string;
+    image: string;
+    userId: string;
+    private: boolean;
+    username: string;
 };
 
 export type UserListOptions = {
     userId: string;
-    searchString: string;
-    pageNumber: number;
     pageSize: number;
     sortBy: SortOrder;
+    pageNumber: number;
+    searchString?: string;
+    removeFollowed?: boolean;
 };
 

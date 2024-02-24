@@ -24,6 +24,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    private: {
+        type: Boolean,
+        default: false
+    },
     communities: [{
         type: Schema.Types.ObjectId,
         ref: 'Community'

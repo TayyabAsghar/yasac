@@ -4,9 +4,9 @@ import User from '../models/user.model';
 import { connectToDB } from '../mongoose';
 import { revalidatePath } from 'next/cache';
 import Thread from '../models/thread.model';
-import { Types, startSession } from 'mongoose';
 import Community from '../models/community.model';
 import { ThreadData } from '@/core/types/thread-data';
+import { FilterQuery, Types, startSession } from 'mongoose';
 
 export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20) {
     try {
@@ -15,8 +15,16 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
         // Calculate the number of posts to skip based on the page number and page size.
         const skipAmount = (pageNumber - 1) * pageSize;
 
-        // Create a query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply).
-        const postsQuery = Thread.find({ parentId: { $in: [null, undefined] } }).sort({ createdAt: 'desc' })
+        const user = await User.findOne({ _id: userId }).select('following');
+        // find the users that are not followed by user but are not private.
+        const publicUsers = await User.find({ _id: { $nin: [user.following, userId] }, private: false }).select('_id');
+
+        const query: FilterQuery<typeof User> = {
+            parentId: { $in: [null, undefined] }, // Query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply)
+            author: { $in: [user.following, publicUsers.map(user => user._id), userId] }
+        };
+
+        const postsQuery = Thread.find(query).sort({ createdAt: 'desc' })
             .skip(skipAmount).limit(pageSize)
             .populate({
                 path: 'author',
@@ -33,12 +41,10 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
                 }
             });
 
-        // Count the total number of top-level posts (threads) i.e., threads that are not comments.
-        const totalPostsCount = await Thread.countDocuments({
-            parentId: { $in: [null, undefined] }
-        }); // Get the total count of posts
-
-        const postList = await postsQuery.exec();
+        const [totalPostsCount, postList] = await Promise.all([
+            Thread.countDocuments(query), // Get the total count of posts
+            postsQuery.exec()
+        ]);
 
         const posts = postList.map(post => ({
             ...post._doc,

@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { followUser, isUserAFollower, unFollowUser } from '@/lib/actions/user.actions';
-import { usePathname } from 'next/navigation';
 
 type Props = {
     accountId: string;

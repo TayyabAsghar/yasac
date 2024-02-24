@@ -45,6 +45,7 @@ export async function updateUser(user: DBUserData): Promise<void> {
                 name: user.name,
                 onboarded: true,
                 image: user.image,
+                private: user.private,
                 username: user.username.toLowerCase()
             },
             { upsert: true }
@@ -61,7 +62,7 @@ export async function fetchUserThreads(userId: string): Promise<any> {
         connectToDB();
 
         // Find all threads authored by the user with the given userId
-        const threads = await User.findOne({ id: userId }).populate({
+        const threads = await User.findOne({ _id: userId }).populate({
             path: 'threads',
             model: Thread,
             populate: [{
@@ -84,6 +85,17 @@ export async function fetchUserThreads(userId: string): Promise<any> {
     }
 }
 
+export async function isPrivateUser(userId: string): Promise<boolean> {
+    try {
+        connectToDB();
+
+        const user = await User.findOne({ _id: userId });
+        return user.private;
+    } catch (error: any) {
+        throw new Error(`Error fetching user threads: ${error.message}`);
+    }
+}
+
 export async function fetchUsers(options: UserListOptions): Promise<{ users: any[]; isNext: boolean; }> {
     try {
         connectToDB();
@@ -92,15 +104,16 @@ export async function fetchUsers(options: UserListOptions): Promise<{ users: any
         const skipAmount = (options.pageNumber - 1) * options.pageSize;
 
         // Create a case-insensitive regular expression for the provided search string.
-        const regex = new RegExp(options.searchString, 'i');
+        const regex = new RegExp(options?.searchString ?? '', 'i');
 
         // Create an initial query object to filter users.
         const query: FilterQuery<typeof User> = {
-            id: { $ne: options.userId } // Exclude the current user from the results.
+            _id: { $ne: options.userId }, // Exclude the current user from the results.
+            ...(options.removeFollowed && { followers: { $ne: options.userId } }) // Exclude if user is already being followed.
         };
 
         // If the search string is not empty, add the $or operator to match either username or name fields.
-        if (options.searchString.trim() !== '') {
+        if (options?.searchString?.trim() !== '') {
             query.$or = [
                 { username: { $regex: regex } },
                 { name: { $regex: regex } }
@@ -112,10 +125,42 @@ export async function fetchUsers(options: UserListOptions): Promise<{ users: any
 
         const usersQuery = User.find(query).sort(sortOptions).skip(skipAmount).limit(options.pageSize);
 
-        // Count the total number of users that match the search criteria (without pagination).
-        const totalUsersCount = await User.countDocuments(query);
+        const [totalUsersCount, users] = await Promise.all([
+            User.countDocuments(query),
+            usersQuery.exec()
+        ]);
 
-        const users = await usersQuery.exec();
+        // Check if there are more users beyond the current page.
+        const isNext = totalUsersCount > skipAmount + users.length;
+
+        return { users, isNext };
+    } catch (error: any) {
+        throw new Error(`Error fetching users: ${error.message}`);
+    }
+}
+
+export async function fetchFollowersList(options: UserListOptions): Promise<{ users: any[]; isNext: boolean; }> {
+    try {
+        connectToDB();
+
+        // Calculate the number of users to skip based on the page number and page size.
+        const skipAmount = (options.pageNumber - 1) * options.pageSize;
+
+        // Create an initial query object to filter users.
+        const query: FilterQuery<typeof User> = {
+            _id: { $ne: options.userId }, // Exclude the current user from the results.
+            followers: { $in: options.userId } // Include if user is being followed.
+        };
+
+        // Define the sort options for the fetched users based on createdAt field and provided sort order.
+        const sortOptions = { createdAt: options.sortBy };
+
+        const usersQuery = User.find(query).sort(sortOptions).skip(skipAmount).limit(options.pageSize);
+
+        const [totalUsersCount, users] = await Promise.all([
+            User.countDocuments(query),
+            usersQuery.exec()
+        ]);
 
         // Check if there are more users beyond the current page.
         const isNext = totalUsersCount > skipAmount + users.length;
@@ -210,7 +255,7 @@ export async function unFollowUser(userId: string, currentUserId: string, path: 
 
         const userUpdate2 = await User.updateOne(
             { _id: currentUserId },
-            { $pull: { followers: userId } },
+            { $pull: { following: userId } },
             { session }
         );
 

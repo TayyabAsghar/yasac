@@ -1,12 +1,13 @@
 import Image from 'next/image';
+import { formatNumber } from '@/lib/utils';
 import { currentUser } from '@clerk/nextjs';
 import UserCard from '@/components/cards/user-card';
 import ThreadsTab from '@/components/shared/thread-tab';
 import ProfileHeader from '@/components/shared/profile-header';
 import { CommunityTabs } from '@/core/constants/navigation-links';
+import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { fetchCommunityDetails } from '@/lib/actions/community.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 
 const Page = async ({ params }: { params: { slug: string; }; }) => {
     const user = await currentUser();
@@ -37,7 +38,7 @@ const Page = async ({ params }: { params: { slug: string; }; }) => {
 
                                 {tab.label === 'Threads' && (
                                     <p className='ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2'>
-                                        {threadCount}
+                                        {formatNumber(threadCount)}
                                     </p>
                                 )}
                             </TabsTrigger>

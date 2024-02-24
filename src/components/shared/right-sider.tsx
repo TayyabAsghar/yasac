@@ -1,6 +1,6 @@
 import UserCard from '../cards/user-card';
 import { currentUser } from '@clerk/nextjs';
-import { fetchUsers } from '@/lib/actions/user.actions';
+import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
 import { UserListOptions } from '@/core/types/user-data';
 import { CommunityListOptions } from '@/core/types/community-data';
 import { fetchCommunities } from '@/lib/actions/community.actions';
@@ -9,12 +9,15 @@ const RightSider = async () => {
     const user = await currentUser();
     if (!user) return null;
 
+    const userInfo = await fetchUser(user.id);
+
     const userOptions: UserListOptions = {
-        userId: user.id,
-        searchString: '',
-        pageNumber: 1,
         pageSize: 4,
-        sortBy: 'asc'
+        sortBy: 'asc',
+        pageNumber: 1,
+        searchString: '',
+        removeFollowed: true,
+        userId: userInfo._id
     };
 
     const communityOptions: CommunityListOptions = {
