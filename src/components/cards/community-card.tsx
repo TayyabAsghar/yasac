@@ -17,7 +17,7 @@ const CommunityCard = ({ name, slug, imgUrl, bio, members }: Props) => {
         <article className='community-card'>
             <div className='flex flex-wrap items-center gap-3'>
                 <Link href={`/communities/${slug}`} className='relative h-12 w-12'>
-                    <Image src={imgUrl} alt='Community Logo' title='Community Logo' fill
+                    <Image src={imgUrl} alt='Community Logo' title='Community Logo' height={48} width={48}
                         className='rounded-full object-cover' />
                 </Link>
 
@@ -40,7 +40,7 @@ const CommunityCard = ({ name, slug, imgUrl, bio, members }: Props) => {
                     <div className='flex items-center'>
                         {members.map((member, index) => (
                             <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
-                                <Image src={member.image} alt={`User ${index}`} title='Member Image' layout='fill' objectFit='cover'
+                                <Image src={member.image} alt={`User ${index}`} title='Member Image' width={24} height={24}
                                     className='rounded-full' />
                             </div>
                         ))}

@@ -33,7 +33,7 @@ const Page = async ({ searchParams }: { searchParams: { [key: string]: string | 
                 ) : (
                     <>
                         {result.users.map((person) => (
-                            <UserCard key={person.id} id={person.id} name={person.name} username={person.username}
+                            <UserCard key={person.id.toString()} id={person.id.toString()} name={person.name} username={person.username}
                                 imgUrl={person.image} personType='User' />
                         ))}
                     </>

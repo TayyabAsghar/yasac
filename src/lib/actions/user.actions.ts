@@ -8,14 +8,28 @@ import Community from '@/lib/models/community.model';
 import { FilterQuery, startSession } from 'mongoose';
 import { DBUserData, UserListOptions } from '@/core/types/user-data';
 
+function simplifyUserObject(userObject: any) {
+    return {
+        id: userObject.id,
+        bio: userObject.bio,
+        name: userObject.name,
+        image: userObject.image,
+        private: userObject.private,
+        username: userObject.username,
+        onboarded: userObject.onboarded,
+        _id: userObject._id.toString(),
+        threads: userObject.threads.map((id: any) => id.toString()),
+        following: userObject.following.map((id: any) => id.toString()),
+        followers: userObject.followers.map((id: any) => id.toString()),
+        communities: userObject.communities.map((id: any) => id.toString())
+    };
+}
+
 export async function fetchUser(userId: string): Promise<any> {
     try {
         connectToDB();
 
-        return await User.findOne({ id: userId }).populate({
-            path: 'communities',
-            model: Community,
-        });
+        return simplifyUserObject(await User.findOne({ id: userId }));
     } catch (error: any) {
         throw new Error(`Failed to fetch user: ${error.message}`);
     }
@@ -25,10 +39,7 @@ export async function fetchUserByUsername(username: string): Promise<any> {
     try {
         connectToDB();
 
-        return await User.findOne({ username: username }).populate({
-            path: 'communities',
-            model: Community,
-        });
+        return simplifyUserObject(await User.findOne({ username: username }));
     } catch (error: any) {
         throw new Error(`Failed to fetch user: ${error.message}`);
     }

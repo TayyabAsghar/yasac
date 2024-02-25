@@ -44,7 +44,7 @@ const ProfileHeader = async (props: Props) => {
                 <div className='flex flex-col items-start gap-3 w-full'>
                     <div className='flex justify-between items-center w-full'>
                         <div className='relative h-20 w-20 object-cover'>
-                            <Image src={props.imgUrl} alt='Profile Photo' title='Profile Photo' fill
+                            <Image src={props.imgUrl} alt='Profile Photo' title='Profile Photo' height={80} width={80}
                                 className='rounded-full object-cover shadow-2xl' />
                         </div>
                         <div className='flex justify-between items-center gap-10 max-sm:gap-3'>

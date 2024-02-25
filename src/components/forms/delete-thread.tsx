@@ -8,7 +8,7 @@ interface Props {
     threadId: string;
     currentUserId: string;
     authorId: string;
-    parentId: string | null;
+    parentId: string | undefined;
     isComment?: boolean;
 }
 

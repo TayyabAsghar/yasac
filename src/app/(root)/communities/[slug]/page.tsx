@@ -19,7 +19,7 @@ const Page = async ({ params }: { params: { slug: string; }; }) => {
     return (
         <section>
             <ProfileHeader
-                accountId={communityDetails._id}
+                accountId={communityDetails._id.toString()}
                 name={communityDetails.name}
                 username={params.slug}
                 imgUrl={communityDetails.image}
@@ -31,7 +31,7 @@ const Page = async ({ params }: { params: { slug: string; }; }) => {
                 <Tabs defaultValue='threads' className='w-full'>
                     <TabsList className='tab'>
                         {CommunityTabs.map((tab) => (
-                            <TabsTrigger key={tab.label} value={tab.value} className='tab'>
+                            <TabsTrigger key={tab.label} value={tab.value} tabNavigation={`/community/${params.slug}`} className='tab'>
                                 <Image src={tab.icon} alt={tab.label} title={tab.label} width={24} height={24}
                                     className='object-contain' />
                                 <p className='max-sm:hidden'>{tab.label}</p>
@@ -46,15 +46,15 @@ const Page = async ({ params }: { params: { slug: string; }; }) => {
                     </TabsList>
 
                     <TabsContent value='threads' className='w-full text-light-1'>
-                        <ThreadsTab currentUserId={user.id} accountId={communityDetails._id} accountType='Community' />
+                        <ThreadsTab currentUserId={user.id} accountId={communityDetails._id.toString()} accountType='Community' />
                     </TabsContent>
 
                     <TabsContent value='members' className='mt-9 w-full text-light-1'>
                         <section className='mt-9 flex flex-col gap-10'>
                             {communityDetails.members.map((member: any) => (
                                 <UserCard
-                                    key={member.id}
-                                    id={member.id}
+                                    key={member.id.toString()}
+                                    id={member.id.toString()}
                                     name={member.name}
                                     username={member.username}
                                     imgUrl={member.image}
@@ -65,7 +65,7 @@ const Page = async ({ params }: { params: { slug: string; }; }) => {
                     </TabsContent>
 
                     <TabsContent value='requests' className='w-full text-light-1'>
-                        <ThreadsTab currentUserId={user.id} accountId={communityDetails._id} accountType='Community' />
+                        <ThreadsTab currentUserId={user.id} accountId={communityDetails._id.toString()} accountType='Community' />
                     </TabsContent>
                 </Tabs>
             </div>

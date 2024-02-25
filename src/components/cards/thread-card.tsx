@@ -14,7 +14,7 @@ const ThreadCard = (threadData: ThreadCard) => {
                 <div className='flex w-full flex-1 flex-row gap-4'>
                     <div className='flex flex-col items-center'>
                         <Link href={`/profile/${threadData.author.id}`} className='relative h-11 w-11'>
-                            <Image src={threadData.author.image} alt='Profile Photo' title='Profile Photo' fill
+                            <Image src={threadData.author.image} alt='Profile Photo' title='Profile Photo' width={44} height={44}
                                 className='cursor-pointer rounded-full' />
                         </Link>
                         <div className='thread-card-bar' />
@@ -31,7 +31,7 @@ const ThreadCard = (threadData: ThreadCard) => {
 
                         <div className={`${threadData.isComment && 'mb-10'} mt-5 flex flex-col gap-3`}>
                             <div className='flex gap-3.5'>
-                                <ToggleHeart threadId={threadData.id.toString()} userId={threadData.currentUserId} isLiked={threadData.isLiked}
+                                <ToggleHeart threadId={threadData.id.toString()} userId={threadData.currentUserId.toString()} isLiked={threadData.isLiked}
                                     likesCount={threadData.likesCount} />
                                 <Link href={`/thread/${threadData.id}`}>
                                     <Image src='/assets/reply.svg' alt='Replay' title='Replay' width={24} height={24}
@@ -50,9 +50,9 @@ const ThreadCard = (threadData: ThreadCard) => {
 
                 <DeleteThread
                     threadId={threadData.id.toString()}
-                    currentUserId={threadData.currentUserId}
-                    authorId={threadData.author.id}
-                    parentId={threadData.parentId}
+                    currentUserId={threadData.currentUserId.toString()}
+                    authorId={threadData.author.id.toString()}
+                    parentId={threadData?.parentId?.toString()}
                     isComment={threadData.isComment}
                 />
             </div>

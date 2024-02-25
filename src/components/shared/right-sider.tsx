@@ -42,8 +42,8 @@ const RightSider = async () => {
                         <>
                             {suggestedCommunities.communities.map((community) => (
                                 <UserCard
-                                    key={community.id}
-                                    id={community.id}
+                                    key={community.id.toString()}
+                                    id={community.id.toString()}
                                     name={community.name}
                                     username={community.slug}
                                     imgUrl={community.image}
@@ -64,8 +64,8 @@ const RightSider = async () => {
                         <>
                             {similarMinds.users.map((person) => (
                                 <UserCard
-                                    key={person.id}
-                                    id={person.id}
+                                    key={person.id.toString()}
+                                    id={person.id.toString()}
                                     name={person.name}
                                     username={person.username}
                                     imgUrl={person.image}

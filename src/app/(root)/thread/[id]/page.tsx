@@ -20,9 +20,9 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
         <section className='relative'>
             <div>
                 <ThreadCard
-                    id={thread._id}
+                    id={thread._id.toString()}
                     currentUserId={userInfo._id.toString()}
-                    parentId={thread.parentId}
+                    parentId={thread.parentId.toString()}
                     content={thread.text}
                     author={thread.author}
                     community={thread.community}
@@ -36,19 +36,19 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
 
             <div className='mt-7'>
                 <Comment
-                    threadId={params.id}
+                    threadId={params.id.toString()}
                     currentUserImg={user.imageUrl}
-                    currentUserId={JSON.stringify(userInfo._id)}
+                    currentUserId={userInfo._id.toString()}
                 />
             </div>
 
             <div className='mt-10'>
                 {thread.children.map((childItem: any) => (
                     <ThreadCard
-                        key={childItem._id}
-                        id={childItem._id}
+                        key={childItem._id.toString()}
+                        id={childItem._id.toString()}
                         currentUserId={userInfo._id.toString()}
-                        parentId={childItem.parentId}
+                        parentId={childItem.parentId.toString()}
                         content={childItem.text}
                         author={childItem.author}
                         community={childItem.community}

@@ -10,7 +10,7 @@ const RepliedProfiles = (threadData: ThreadCard) => {
         <div className='ml-1 mt-3 flex items-center gap-2'>
             {distinctComments.map((comment, index) => (
                 <div key={index} className={`relative overflow-hidden ${index !== 0 && '-ml-2'} rounded-full h-6 w-6`}>
-                    <Image src={comment.author.image} alt={comment.author.username} title={comment.author.username} layout='fill' objectFit='cover'
+                    <Image src={comment.author.image} alt={comment.author.username} title={comment.author.username} width={24} height={24}
                         className='rounded-full' />
                 </div>
             ))}

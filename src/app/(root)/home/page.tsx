@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
 import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadCard from '@/components/cards/thread-card';
 import Pagination from '@/components/shared/pagination';
@@ -29,10 +28,10 @@ const Page = async ({ searchParams, }: { searchParams: { [key: string]: string |
                     <>
                         {result.posts.map((post) => (
                             <ThreadCard
-                                key={post._id}
-                                id={post._id}
+                                key={post._id.toString()}
+                                id={post._id.toString()}
                                 currentUserId={userInfo._id.toString()}
-                                parentId={post.parentId}
+                                parentId={post?.parentId?.toString()}
                                 content={post.text}
                                 author={post.author}
                                 community={post.community}
