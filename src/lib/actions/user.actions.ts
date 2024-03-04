@@ -13,6 +13,7 @@ function simplifyUserObject(userObject: any) {
         id: userObject.id,
         bio: userObject.bio,
         name: userObject.name,
+        email: userObject.email,
         image: userObject.image,
         private: userObject.private,
         username: userObject.username,
@@ -57,6 +58,7 @@ export async function updateUser(user: DBUserData): Promise<void> {
                 onboarded: true,
                 image: user.image,
                 private: user.private,
+                email: user.email,
                 username: user.username.toLowerCase()
             },
             { upsert: true }
@@ -201,7 +203,7 @@ export async function getActivity(userId: string) {
         }).populate({
             path: 'author',
             model: User,
-            select: 'name image _id',
+            select: 'name image _id username',
         });
 
         return replies;

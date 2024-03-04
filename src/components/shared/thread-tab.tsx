@@ -29,7 +29,7 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
 
     return (
         <section className='mt-9 flex flex-col gap-10'>
-            {result.threads.map((thread) => (
+            {result.threads && result.threads.map((thread) => (
                 <ThreadCard
                     key={thread._id.toString()}
                     id={thread._id.toString()}
@@ -37,13 +37,17 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
                     parentId={thread.parentId}
                     content={thread.text}
                     author={
-                        accountType === 'User'
-                            ? { name: result.name, image: result.image, id: result.id.toString() }
-                            : {
-                                name: thread.author.name,
-                                image: thread.author.image,
-                                id: thread.author.id.toString(),
-                            }
+                        accountType === 'User' ? {
+                            name: result.name,
+                            image: result.image,
+                            id: result.id.toString(),
+                            username: result.slug ?? ''
+                        } : {
+                            name: thread.author.name,
+                            image: thread.author.image,
+                            id: thread.author.id.toString(),
+                            username: thread.author.username
+                        }
                     }
                     community={
                         accountType === 'Community'

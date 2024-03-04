@@ -10,6 +10,7 @@ export type CommunityData = {
 };
 
 export type CommunityListOptions = {
+    userId?: string;
     pageSize: number;
     sortBy: SortOrder;
     pageNumber: number;

@@ -44,7 +44,7 @@ const ProfileHeader = async (props: Props) => {
                 <div className='flex flex-col items-start gap-3 w-full'>
                     <div className='flex justify-between items-center w-full'>
                         <div className='relative h-20 w-20 object-cover'>
-                            <Image src={props.imgUrl} alt='Profile Photo' title='Profile Photo' height={80} width={80}
+                            <Image src={props.imgUrl} alt='Profile Photo' title={props.username} height={80} width={80}
                                 className='rounded-full object-cover shadow-2xl' />
                         </div>
                         <div className='flex justify-between items-center gap-10 max-sm:gap-3'>
@@ -67,7 +67,7 @@ const ProfileHeader = async (props: Props) => {
                         </div>
                         {props.type !== 'Community' && (props.username === props.accountUsername ?
                             <Link href='/profile/edit'>
-                                <div className='flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2'>
+                                <div className='flex cursor-pointer gap-3 rounded-lg bg-primary-500 px-4 py-2 hover:bg-secondary-500'>
                                     <Image src='/assets/edit.svg' alt='Edit Profile' title='Edit Profile' width={16} height={16} />
                                     <p className='text-light-2 max-sm:hidden'>Edit</p>
                                 </div>

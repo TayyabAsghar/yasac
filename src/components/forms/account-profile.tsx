@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
-import { isBase64Image } from '@/lib/utils';
 import { ChangeEvent, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { updateUser } from '@/lib/actions/user.actions';
 import { usePathname, useRouter } from 'next/navigation';
 import { UserValidations } from '@/lib/validations/user';
+import { isBase64Image, toTitleCase } from '@/lib/utils';
 import { DBUserData, UserData } from '@/core/types/user-data';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
@@ -25,6 +25,7 @@ type Props = {
 const AccountProfile = ({ user, btnTitle }: Props) => {
     const router = useRouter();
     const pathname = usePathname();
+    const [loading, setLoading] = useState(false);
     const [files, setFiles] = useState<File[]>([]);
     const { startUpload } = useUploadThing('media');
 
@@ -32,10 +33,11 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
         resolver: zodResolver(UserValidations),
         defaultValues: {
             bio: user.bio,
-            name: user.name,
+            email: user.email,
+            private: user.private,
             username: user.username,
             profilePhoto: user.image,
-            private: user.private
+            name: toTitleCase(user.name)
         }
     });
 
@@ -60,6 +62,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     };
 
     const onSubmit = async (values: z.infer<typeof UserValidations>) => {
+        setLoading(true);
         const hasImageChanged = isBase64Image(values.profilePhoto);
         const userData: DBUserData = {
             name: values.name,
@@ -68,7 +71,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             userId: user.id,
             bio: values.bio,
             image: values.profilePhoto,
-            private: values.private
+            private: values.private,
+            email: values.email
         };
 
         if (hasImageChanged) {
@@ -77,7 +81,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             if (imgRes && imgRes[0].url) userData.image = imgRes[0].url;
         }
 
-        await updateUser(userData);
+        await updateUser(userData).finally(() => setLoading(false));
 
         if (pathname === '/profile/edit') router.back();
         else router.push('/home');
@@ -92,9 +96,9 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                     <FormItem className='flex items-center gap-4'>
                         <FormLabel className='account-form-image-label'>
                             {field.value ?
-                                <Image src={field.value} alt='Profile Photo' title='Profile Photo' width={96} height={96}
+                                <Image src={field.value} alt='Profile Photo' title={user.username} width={96} height={96}
                                     className='rounded-full object-contains' priority />
-                                : <Image src='/assets/profile.svg' alt='Profile Photo' title='Profile Photo' width={24} height={24}
+                                : <Image src='/assets/profile.svg' alt='Profile Photo' title={user.username} width={24} height={24}
                                     className='object-contains' />}
                         </FormLabel>
                         <FormControl className='flex-1 text-base-semibold text-gray-200'>
@@ -109,7 +113,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                     <FormItem className='flex flex-col w-full'>
                         <FormLabel className='text-base-semibold text-light-2'>Name</FormLabel>
                         <FormControl>
-                            <Input className='account-form-input no-focus' type='text' placeholder='Name' {...field} />
+                            <Input className='account-form-input no-focus' type='text' placeholder='Name' {...field} onBlur={() => toTitleCase(field.value)} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -125,13 +129,23 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                     </FormItem>
                 )} />
 
+                <FormField control={form.control} name='email' render={({ field }) => (
+                    <FormItem className='flex flex-col gap-3 w-full'>
+                        <FormLabel className='text-base-semibold text-light-2'>Email</FormLabel>
+                        <FormControl>
+                            <Input className='account-form-input no-focus' disabled type='email' {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )} />
+
                 <FormField control={form.control} name="private"
                     render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                             <FormControl>
                                 <Checkbox className="account-form-input" checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
-                            <FormLabel className='text-base-semibold text-light-2'>
+                            <FormLabel className='text-base-semibold text-light-2 cursor-pointer'>
                                 Make account private
                             </FormLabel>
                         </FormItem>
@@ -142,13 +156,13 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                     <FormItem className='flex flex-col gap-3 w-full'>
                         <FormLabel className='text-base-semibold text-light-2'>Bio</FormLabel>
                         <FormControl >
-                            <Textarea className='account-form-input no-focus' rows={10} {...field}
+                            <Textarea className='account-form-input no-focus' rows={5} {...field}
                                 placeholder='Tell people about yourself' />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )} />
-                <Button className='bg-primary-500 hover:bg-secondary-500' type='submit'>{btnTitle}</Button>
+                <Button className='bg-primary-500 hover:bg-secondary-500' disabled={loading} type='submit'>{btnTitle}</Button>
             </form>
         </Form >
     );

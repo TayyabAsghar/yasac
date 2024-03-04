@@ -8,11 +8,14 @@ import { CommunityTabs } from '@/core/constants/navigation-links';
 import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { fetchCommunityDetails } from '@/lib/actions/community.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { redirect } from 'next/navigation';
 
-const Page = async ({ params }: { params: { slug: string; }; }) => {
+const Page = async ({ params, searchParams }: { params: { slug: string; }, searchParams: { [key: string]: string | undefined; }; }) => {
     const user = await currentUser();
     if (!user) return null;
 
+    const queryTab = searchParams.tab?.toLowerCase() ?? '';
+    let defaultTab: string = !queryTab ? 'threads' : CommunityTabs.find(tab => tab.value === queryTab)?.value ?? redirect(`/communities/${params.slug}`);
     const communityDetails = await fetchCommunityDetails(params.slug);
     const threadCount = await fetchUserThreadsCount(communityDetails._id);
 
@@ -28,19 +31,19 @@ const Page = async ({ params }: { params: { slug: string; }; }) => {
             />
 
             <div className='mt-9'>
-                <Tabs defaultValue='threads' className='w-full'>
+                <Tabs defaultValue={defaultTab} className='w-full'>
                     <TabsList className='tab'>
                         {CommunityTabs.map((tab) => (
-                            <TabsTrigger key={tab.label} value={tab.value} tabNavigation={`/community/${params.slug}`} className='tab'>
+                            <TabsTrigger key={tab.label} value={tab.value} tabNavigation={`/communities/${params.slug}?tab=${tab.value}`} className='tab'>
                                 <Image src={tab.icon} alt={tab.label} title={tab.label} width={24} height={24}
                                     className='object-contain' />
                                 <p className='max-sm:hidden'>{tab.label}</p>
 
-                                {tab.label === 'Threads' && (
+                                {tab.label === 'Threads' &&
                                     <p className='ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2'>
                                         {formatNumber(threadCount)}
                                     </p>
-                                )}
+                                }
                             </TabsTrigger>
                         ))}
                     </TabsList>

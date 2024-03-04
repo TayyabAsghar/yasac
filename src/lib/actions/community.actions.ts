@@ -102,7 +102,7 @@ export async function fetchCommunityThreads(id: string, userId: string): Promise
     }
 }
 
-export async function fetchCommunities(options: CommunityListOptions) {
+export async function fetchCommunities(options: CommunityListOptions): Promise<{ communities: any[]; isNext: boolean; }> {
     try {
         connectToDB();
 
@@ -113,7 +113,9 @@ export async function fetchCommunities(options: CommunityListOptions) {
         const regex = new RegExp(options.searchString, 'i');
 
         // Create an initial query object to filter communities.
-        const query: FilterQuery<typeof Community> = {};
+        let query: FilterQuery<typeof Community> = {};
+
+        if (options?.userId) query = { members: { $ne: options.userId } };
 
         // If the search string is not empty, add the $or operator to match either username or name fields.
         if (options.searchString.trim()) {
@@ -144,7 +146,7 @@ export async function fetchCommunities(options: CommunityListOptions) {
     }
 }
 
-export async function addMemberToCommunity(communityId: string, memberId: string) {
+export async function addMemberToCommunity(communityId: string, email: string) {
     const session = await startSession();
 
     try {
@@ -155,7 +157,7 @@ export async function addMemberToCommunity(communityId: string, memberId: string
         // Find the community and user by their unique ids concurrently
         const [community, user] = await Promise.all([
             Community.findOne({ id: communityId }),
-            User.findOne({ id: memberId })
+            User.findOne({ email: email })
         ]);
 
         if (!user) throw new NextError('User not found', 404);
@@ -169,13 +171,13 @@ export async function addMemberToCommunity(communityId: string, memberId: string
             throw new NextError('User is already a member of the community', 409);
 
         // Add the community's _id to the communities array in the user
-        if (includedInCommunity) {
+        if (!includedInCommunity) {
             user.communities.push(community._id);
             await user.save();
         }
 
         // Add the user's _id to the members array in the community
-        if (includedInUser) {
+        if (!includedInUser) {
             community.members.push(user._id);
             await community.save();
         }
@@ -228,7 +230,7 @@ export async function removeUserFromCommunity(userId: string, communityId: strin
         return { success: true };
     } catch (error: any) {
         if (session.inTransaction()) await session.abortTransaction();
-        throw new NextError(`Error removing user from community: ${error.message}`, 500);
+        throw new NextError(`Error removing user from community: ${error.message}`, error.statusCode);
     } finally {
         session.endSession();
     }
@@ -249,7 +251,7 @@ export async function updateCommunityInfo(communityId: string, name: string, slu
 
         return updatedCommunity;
     } catch (error: any) {
-        throw new NextError(`Error updating community information: ${error.message}`, 500);
+        throw new NextError(`Error updating community information: ${error.message}`, error.statusCode);
     }
 }
 
@@ -266,12 +268,12 @@ export async function deleteCommunity(communityId: string) {
         if (!deletedCommunity) throw new NextError('Community not found', 404);
 
         // Delete all threads associated with the community
-        await Thread.deleteMany({ community: communityId }, { session });
+        await Thread.deleteMany({ community: deletedCommunity._id }, { session });
 
         // Update all users who are part of the community in one go
         await User.updateMany(
-            { communities: communityId },
-            { $pull: { communities: communityId } },
+            { communities: deletedCommunity._id },
+            { $pull: { communities: deletedCommunity._id } },
             { session }
         );
 
@@ -281,7 +283,7 @@ export async function deleteCommunity(communityId: string) {
         return deletedCommunity;
     } catch (error: any) {
         if (session.inTransaction()) await session.abortTransaction();
-        throw new NextError(`Error deleting community: ${error.message}`, 500);
+        throw new NextError(`Error deleting community: ${error.message}`, error.statusCode);
     } finally {
         session.endSession();
     }

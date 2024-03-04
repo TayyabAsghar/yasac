@@ -15,10 +15,11 @@ const Page = async () => {
         id: user.id,
         objectId: userInfo?._id,
         bio: userInfo ? userInfo?.bio : '',
+        private: userInfo ? userInfo.private : false,
         image: userInfo ? userInfo?.image : user.imageUrl,
         username: userInfo ? userInfo?.username : user.username,
         name: userInfo ? userInfo?.name : `${user.firstName ?? ''} ${user.lastName ?? ''}`,
-        private: userInfo ? userInfo.private : false
+        email: userInfo ? userInfo.email : user.emailAddresses.find(email => email.id === user.primaryEmailAddressId)?.emailAddress
     };
 
     return (

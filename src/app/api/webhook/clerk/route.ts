@@ -20,6 +20,7 @@ export const POST = async (req: Request) => {
         'svix-timestamp': header.get('svix-timestamp') || '',
         'svix-signature': header.get('svix-signature') || '',
     };
+
     if (!heads['svix-id'] || !heads['svix-timestamp'] || !heads['svix-signature'])
         return NextResponse.json({ message: 'Error occurred -- no svix headers' }, { status: 400 });
 
@@ -37,6 +38,7 @@ export const POST = async (req: Request) => {
     }
 
     switch (event?.type) {
+        // Organization
         case 'organization.created':
             try {
                 const { id, name, slug, image_url, created_by } = event?.data ?? {};
@@ -50,37 +52,17 @@ export const POST = async (req: Request) => {
                 };
 
                 await createCommunity(communityData);
-                return NextResponse.json({ message: 'User created' }, { status: 201 });
+                return NextResponse.json({ message: 'Organization created' }, { status: 201 });
             } catch (err: any) {
                 console.error(err);
                 if (err.statusCode === 404)
                     return NextResponse.json({ message: err.message }, { status: err.statusCode });
                 return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
             }
-        case 'organizationInvitation.created':
+        case 'organization.deleted':
             try {
-                console.log('Invitation created', event?.data);
-                return NextResponse.json({ message: 'Invitation created' }, { status: 201 });
-            } catch (err) {
-                console.error(err);
-                return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
-            }
-        case 'organizationMembership.created':
-            try {
-                const { organization, public_user_data } = event?.data;
-                await addMemberToCommunity(organization.id, public_user_data.user_id);
-                return NextResponse.json({ message: 'Invitation accepted' }, { status: 201 });
-            } catch (err: any) {
-                console.error(err);
-                if (err.statusCode === 409)
-                    return NextResponse.json({ message: err.message }, { status: err.statusCode });
-                return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
-            }
-        case 'organizationMembership.deleted':
-            try {
-                const { organization, public_user_data } = event?.data;
-                await removeUserFromCommunity(public_user_data.user_id, organization.id);
-                return NextResponse.json({ message: 'Member removed' }, { status: 201 });
+                await deleteCommunity(event?.data?.id || '');
+                return NextResponse.json({ message: 'Organization deleted' }, { status: 201 });
             } catch (err: any) {
                 console.error(err);
                 if (err.statusCode === 404)
@@ -98,10 +80,23 @@ export const POST = async (req: Request) => {
                     return NextResponse.json({ message: err.message }, { status: err.statusCode });
                 return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
             }
-        case 'organization.deleted':
+        // Organization Membership
+        case 'organizationMembership.created':
             try {
-                await deleteCommunity(event?.data?.id || '');
-                return NextResponse.json({ message: 'Organization deleted' }, { status: 201 });
+                const { organization, public_user_data } = event?.data;
+                await addMemberToCommunity(organization.id, public_user_data.identifier);
+                return NextResponse.json({ message: 'Invitation accepted' }, { status: 201 });
+            } catch (err: any) {
+                console.error(err);
+                if (err.statusCode === 409)
+                    return NextResponse.json({ message: err.message }, { status: err.statusCode });
+                return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+            }
+        case 'organizationMembership.deleted':
+            try {
+                const { organization, public_user_data } = event?.data;
+                await removeUserFromCommunity(public_user_data.user_id, organization.id);
+                return NextResponse.json({ message: 'Member removed' }, { status: 201 });
             } catch (err: any) {
                 console.error(err);
                 if (err.statusCode === 404)

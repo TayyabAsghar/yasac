@@ -14,8 +14,13 @@ const Page = async ({ searchParams, }: { searchParams: { [key: string]: string |
 
     const siderLink = SiderLinks.find(link => link.label === 'Search');
 
-    const userInfo = await fetchUser(user.id);
-    if (!userInfo?.onboarded) redirect('/onboarding');
+    let userInfo: any;
+    try {
+        userInfo = await fetchUser(user.id);
+        if (!userInfo?.onboarded) redirect('/onboarding');
+    } catch {
+        redirect('/onboarding');
+    }
 
     const result = await fetchThread(userInfo._id, searchParams.page ? +searchParams.page : 1, 30);
 
@@ -47,7 +52,7 @@ const Page = async ({ searchParams, }: { searchParams: { [key: string]: string |
                 }
             </section>
 
-            {!result.isNext && result.posts.length && siderLink &&
+            {!result.isNext && !!result.posts.length && siderLink &&
                 <div className='flex flex-col items-center gap-4'>
                     <div className='mt-12 h-1 w-full bg-dark-2' />
                     <div className='text-base-semibold text-light-1 p-3'>
@@ -59,7 +64,6 @@ const Page = async ({ searchParams, }: { searchParams: { [key: string]: string |
                         <p className='text-light-1 max-xs:hidden'>{siderLink.label ?? ''}</p>
                     </Link>
                 </div>
-
             }
 
             <Pagination path='/home' pageNumber={searchParams?.page ? +searchParams.page : 1}

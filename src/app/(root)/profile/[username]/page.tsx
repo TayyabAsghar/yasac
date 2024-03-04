@@ -95,27 +95,26 @@ const Page = async ({ params, searchParams }: { params: { username: string; }, s
                         {ProfileTabs.map((tab) => (
                             <TabsContent key={`content-${tab.label}`} value={tab.value} title={tab.label}
                                 className='w-full text-light-1'>
-                                {tab.label === 'Threads' && (
+                                {tab.label === 'Threads' &&
                                     <ThreadsTab accountType='User' accountId={userInfo._id} currentUserId={loggedUserId} />
-                                )}
-                                {tab.label === 'Following' && (
+                                }
+                                {tab.label === 'Following' &&
                                     <section>
                                         <div className='mt-14 flex flex-col gap-9'>
-                                            {result.users.length === 0 ? (
-                                                <p className='no-result'>No Result</p>
-                                            ) : (
+                                            {result.users.length === 0 ?
+                                                <p className='no-result'>No Result</p> :
                                                 <>
                                                     {result.users.map((person) => (
                                                         <UserCard key={person.id} id={person.id} name={person.name} username={person.username}
                                                             imgUrl={person.image} personType='User' />
                                                     ))}
                                                 </>
-                                            )}
+                                            }
                                         </div>
                                         <Pagination path={`profile/${username}`} pageNumber={searchParams?.page ? +searchParams.page : 1}
                                             isNext={result.isNext} />
                                     </section>
-                                )}
+                                }
                             </TabsContent>
                         ))}
                     </Tabs>

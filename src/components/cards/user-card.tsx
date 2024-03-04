@@ -29,7 +29,7 @@ const UserCard = ({ id, name, username, imgUrl, personType }: Props) => {
         <article className='user-card'>
             <div className='user-card-avatar'>
                 <div className='relative h-12 w-12'>
-                    <Image src={imgUrl} alt={imageDisc} title={imageDisc} height={48} width={48}
+                    <Image src={imgUrl} alt={imageDisc} title={username} height={48} width={48}
                         className='rounded-full object-cover' />
                 </div>
 

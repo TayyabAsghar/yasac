@@ -23,12 +23,22 @@ const RightSider = async () => {
     const communityOptions: CommunityListOptions = {
         pageSize: 4,
         sortBy: 'asc',
+        pageNumber: 1,
         searchString: '',
-        pageNumber: 1
+        userId: userInfo._id
     };
 
-    const similarMinds = await fetchUsers(userOptions);
-    const suggestedCommunities = await fetchCommunities(communityOptions);
+    let similarMinds: { users: any[]; isNext: boolean; };
+    let suggestedCommunities: { communities: any[]; isNext: boolean; };
+
+    try {
+        [similarMinds, suggestedCommunities] = await Promise.all([
+            fetchUsers(userOptions),
+            fetchCommunities(communityOptions)
+        ]);
+    } catch {
+        return;
+    }
 
     return (
         <section className='custom-scrollbar right-sider'>

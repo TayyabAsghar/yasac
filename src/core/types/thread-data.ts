@@ -8,9 +8,10 @@ export type ThreadData = {
 };
 
 export type ThreadAuthor = {
+    id: string;
     name: string;
     image: string;
-    id: string;
+    username: string;
 };
 
 export type ThreadComments = {
