@@ -19,7 +19,8 @@ const threadSchema = new Schema({
         default: Date.now
     },
     parentId: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Thread'
     },
     likes: [{
         type: Schema.Types.ObjectId,

@@ -14,8 +14,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 
 type Props = {
     threadId: string;
-    currentUserImg: string;
     currentUserId: string;
+    currentUserImg: string;
 };
 
 const Comment = (commentData: Props) => {
@@ -33,12 +33,7 @@ const Comment = (commentData: Props) => {
     };
 
     const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
-        await addCommentToThread(
-            commentData.threadId,
-            values.thread,
-            JSON.parse(commentData.currentUserId),
-            pathname
-        );
+        await addCommentToThread(commentData.threadId, values.thread, commentData.currentUserId, pathname);
 
         form.reset();
     };

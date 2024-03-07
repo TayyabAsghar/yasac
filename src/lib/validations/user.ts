@@ -7,7 +7,8 @@ export const UserValidations = z.object({
         .max(30, { message: 'Maximum 30 characters.' }),
     username: z.string()
         .min(3, { message: 'Minimum 3 characters.' })
-        .max(30, { message: 'Maximum 30 characters.' }),
+        .max(30, { message: 'Maximum 30 characters.' })
+        .regex(/^(?![0-9_])[a-zA-Z0-9_]+$/, 'Only alpha numeric or _ is allowed & start with alpha.'),
     email: z.string()
         .min(1, { message: 'Required field.' })
         .email("Please enter valid Email!"),

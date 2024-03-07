@@ -5,12 +5,12 @@ import { formatNumber } from '@/lib/utils';
 import { currentUser } from '@clerk/nextjs';
 import UserCard from '@/components/cards/user-card';
 import ThreadsTab from '@/components/shared/thread-tab';
+import Pagination from '@/components/shared/pagination';
 import ProfileHeader from '@/components/shared/profile-header';
 import { ProfileTabs } from '@/core/constants/navigation-links';
 import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchFollowersList, fetchUser, fetchUserByUsername, isPrivateUser, isUserAFollower } from '@/lib/actions/user.actions';
-import Pagination from '@/components/shared/pagination';
 
 const Page = async ({ params, searchParams }: { params: { username: string; }, searchParams: { [key: string]: string | undefined; }; }) => {
     const user = await currentUser();

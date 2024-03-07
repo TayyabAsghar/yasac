@@ -101,29 +101,24 @@ export async function createThread(thread: ThreadData) {
     }
 }
 
-async function fetchAllChildThreads(threadId: string): Promise<any[]> {
-    const threads = await Thread.aggregate([{
-        $match: { _id: new Types.ObjectId(threadId) }
-    }, {
-        $graphLookup: {
-            from: 'threads',
-            startWith: '$_id',
-            connectFromField: '_id',
-            connectToField: 'parentId',
-            as: 'descendantThreads'
-        }
-    }, {
-        $unwind: '$descendantThreads'
-    }, {
-        $sort: { 'descendantThreads.createdAt': -1 }
-    }, {
-        $group: {
-            _id: '$_id',
-            descendantThreads: { $push: '$descendantThreads' }
-        }
-    }]);
-
-    return threads[0].descendantThreads;
+async function fetchAllChildThreads(threadId: string): Promise<{ descendantThreadId: string, author: string, community: string; }[]> {
+    const threads = await Thread.aggregate([
+        { $match: { _id: new Types.ObjectId(threadId) } },
+        {
+            $graphLookup: {
+                from: 'threads',
+                startWith: '$_id',
+                connectFromField: '_id',
+                connectToField: 'parentId',
+                as: 'descendants',
+                depthField: 'level', // Track depth to prevent infinite loops
+                maxDepth: 100, // Set a maximum depth for safety
+            }
+        },
+        { $unwind: '$descendants' }, // Unwind descendant threads
+        { $project: { _id: 0, descendantThreadId: '$descendants._id', author: '$descendants.author', community: '$descendants.community' } }
+    ]);
+    return threads;
 }
 
 export async function deleteThread(id: string, path: string): Promise<void> {
@@ -145,23 +140,19 @@ export async function deleteThread(id: string, path: string): Promise<void> {
         // Get all descendant thread IDs including the main thread ID and child thread IDs
         const descendantThreadIds = [
             id,
-            ...descendantThreads.map((thread) => thread._id),
+            ...descendantThreads.map(thread => thread.descendantThreadId.toString()),
         ];
 
         // Extract the authorIds and communityIds to update User and Community models respectively
-        const uniqueAuthorIds = new Set(
-            [
-                ...descendantThreads.map((thread) => thread.author?._id?.toString()), // Use optional chaining to handle possible undefined values
-                mainThread.author?._id?.toString(),
-            ].filter((id) => id !== undefined)
-        );
+        const uniqueAuthorIds = new Set<string>([
+            ...descendantThreads.flatMap(thread => thread.author ? [thread.author.toString()] : []),
+            ... (mainThread.author?._id ? [mainThread.author._id.toString()] : []),
+        ]);
 
-        const uniqueCommunityIds = new Set(
-            [
-                ...descendantThreads.map((thread) => thread.community?._id?.toString()), // Use optional chaining to handle possible undefined values
-                mainThread.community?._id?.toString(),
-            ].filter((id) => id !== undefined)
-        );
+        const uniqueCommunityIds = new Set<string>([
+            ...descendantThreads.flatMap(thread => thread.community ? [thread.community.toString()] : []),
+            ... (mainThread.community?._id ? [mainThread.community._id.toString()] : []),
+        ]);
 
         // Delete threads and update User and Community models concurrently
         const deleteAndUpdatePromises = [
@@ -265,7 +256,7 @@ export async function addCommentToThread(threadId: string, commentText: string, 
         if (!originalThread) throw new Error('Thread not found');
 
         // Create the new comment thread
-        const commentThread = new Thread({ text: commentText, author: userId, parentId: new Types.ObjectId(threadId) });
+        const commentThread = new Thread({ text: commentText, author: userId, parentId: threadId });
 
         // Save the comment thread to the database
         const savedCommentThread = await commentThread.save();

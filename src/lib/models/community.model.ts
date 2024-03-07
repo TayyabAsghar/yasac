@@ -1,5 +1,4 @@
 import { Schema, model, models } from 'mongoose';
-import { boolean } from 'zod';
 
 const communitySchema = new Schema({
     id: {

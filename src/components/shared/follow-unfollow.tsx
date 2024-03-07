@@ -25,7 +25,6 @@ const FollowUnfollow = ({ accountId, currentUser }: Props) => {
                 await unFollowUser(accountId, currentUser, pathname);
             } else {
                 setFollowing(!following);
-                console.log(following);
                 await followUser(accountId, currentUser, pathname);
             }
         } catch (err: any) {

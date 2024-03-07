@@ -59,8 +59,8 @@ export async function getMembersAndPostCount(communityId: string): Promise<{ pos
         if (!community) throw new Error('Community not found');
 
         // Count the number of threads and members
-        const postsCount = await Community.countDocuments({ _id: community.threads });
-        const membersCount = await Community.countDocuments({ _id: community.members });
+        const postsCount = community.threads.length;
+        const membersCount = community.members.length;
 
         return { postsCount, membersCount };
     } catch (error: any) {
@@ -72,29 +72,35 @@ export async function fetchCommunityThreads(id: string, userId: string): Promise
     try {
         connectToDB();
 
-        const communityPostList = await Community.findById(id).populate({
+        const communityPostList = await Community.findOne({ _id: id }).populate({
             path: 'threads',
             model: Thread,
+            options: {
+                sort: { createdAt: -1 }
+            },
             populate: [{
                 path: 'author',
                 model: User,
-                select: 'name image _id' // Select the 'name' and '_id' fields from the 'User' model
+                select: 'name image _id username' // Select the 'name' and '_id' fields from the 'User' model
             }, {
                 path: 'children',
                 model: Thread,
                 populate: {
                     path: 'author',
                     model: User,
-                    select: 'image _id' // Select the 'image' and '_id' fields from the 'User' model
+                    select: 'name image _id username' // Select the 'image' and '_id' fields from the 'User' model
                 }
             }]
         });
 
-        const communityPosts = communityPostList.threads.map((thread: { _doc: any; likes: { id: { toString: () => any; }; }[]; }) => ({
-            ...thread._doc,
-            likesCount: thread.likes.length,
-            isLiked: thread.likes.some((like: { id: { toString: () => any; }; }) => like.id.toString() === userId.toString())
-        }));
+        const communityPosts = {
+            ...communityPostList._doc,
+            threads: communityPostList.threads.map((thread: { _doc: any; likes: { _id: { toString: () => any; }; }[]; }) => ({
+                ...thread._doc,
+                likesCount: thread.likes.length,
+                isLiked: thread.likes.some((like: { _id: { toString: () => any; }; }) => like._id.toString() === userId.toString())
+            }))
+        };
 
         return communityPosts;
     } catch (error: any) {

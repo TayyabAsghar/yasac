@@ -6,6 +6,7 @@ import ThreadCard from '@/components/cards/thread-card';
 import { fetchThreadById } from '@/lib/actions/thread.actions';
 
 const Page = async ({ params }: { params: { id: string; }; }) => {
+    let thread;
     if (!params.id) return null;
 
     const user = await currentUser();
@@ -14,7 +15,18 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
     const userInfo = await fetchUser(user.id);
     if (!userInfo?.onboarded) redirect('/onboarding');
 
-    const thread = await fetchThreadById(params.id, userInfo._id);
+    try {
+        thread = await fetchThreadById(params.id, userInfo._id);
+    } catch {
+        return (
+            <section className='flex justify-center items-center h-full '>
+                <p className='text-gray-1'>
+                    {'The thread you are looking for doesn\'t exist.'}
+                </p>
+            </section>
+        );
+    };
+
 
     return (
         <section className='relative'>
@@ -22,7 +34,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
                 <ThreadCard
                     id={thread._id.toString()}
                     currentUserId={userInfo._id.toString()}
-                    parentId={thread.parentId.toString()}
+                    parentId={thread.parentId?.toString()}
                     content={thread.text}
                     author={thread.author}
                     community={thread.community}

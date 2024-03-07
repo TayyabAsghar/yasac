@@ -1,14 +1,13 @@
 import Image from 'next/image';
-import { formatNumber } from '@/lib/utils';
+import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs';
 import UserCard from '@/components/cards/user-card';
+import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadsTab from '@/components/shared/thread-tab';
 import ProfileHeader from '@/components/shared/profile-header';
 import { CommunityTabs } from '@/core/constants/navigation-links';
-import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { fetchCommunityDetails } from '@/lib/actions/community.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { redirect } from 'next/navigation';
 
 const Page = async ({ params, searchParams }: { params: { slug: string; }, searchParams: { [key: string]: string | undefined; }; }) => {
     const user = await currentUser();
@@ -16,8 +15,10 @@ const Page = async ({ params, searchParams }: { params: { slug: string; }, searc
 
     const queryTab = searchParams.tab?.toLowerCase() ?? '';
     let defaultTab: string = !queryTab ? 'threads' : CommunityTabs.find(tab => tab.value === queryTab)?.value ?? redirect(`/communities/${params.slug}`);
-    const communityDetails = await fetchCommunityDetails(params.slug);
-    const threadCount = await fetchUserThreadsCount(communityDetails._id);
+    const [userInfo, communityDetails] = await Promise.all([
+        fetchUser(user.id),
+        fetchCommunityDetails(params.slug)
+    ]);
 
     return (
         <section>
@@ -38,18 +39,12 @@ const Page = async ({ params, searchParams }: { params: { slug: string; }, searc
                                 <Image src={tab.icon} alt={tab.label} title={tab.label} width={24} height={24}
                                     className='object-contain' />
                                 <p className='max-sm:hidden'>{tab.label}</p>
-
-                                {tab.label === 'Threads' &&
-                                    <p className='ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2'>
-                                        {formatNumber(threadCount)}
-                                    </p>
-                                }
                             </TabsTrigger>
                         ))}
                     </TabsList>
 
                     <TabsContent value='threads' className='w-full text-light-1'>
-                        <ThreadsTab currentUserId={user.id} accountId={communityDetails._id.toString()} accountType='Community' />
+                        <ThreadsTab currentUserId={userInfo._id} accountId={communityDetails._id.toString()} accountType='Community' />
                     </TabsContent>
 
                     <TabsContent value='members' className='mt-9 w-full text-light-1'>
@@ -68,7 +63,7 @@ const Page = async ({ params, searchParams }: { params: { slug: string; }, searc
                     </TabsContent>
 
                     <TabsContent value='requests' className='w-full text-light-1'>
-                        <ThreadsTab currentUserId={user.id} accountId={communityDetails._id.toString()} accountType='Community' />
+                        <div className='flex justify-center items-center h-12'>There are no pending requests right now.</div>
                     </TabsContent>
                 </Tabs>
             </div>

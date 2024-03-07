@@ -65,7 +65,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
         setLoading(true);
         const hasImageChanged = isBase64Image(values.profilePhoto);
         const userData: DBUserData = {
-            name: values.name,
+            name: toTitleCase(values.name),
             path: pathname,
             username: values.username,
             userId: user.id,

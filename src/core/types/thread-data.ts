@@ -22,10 +22,11 @@ export type ThreadComments = {
 };
 
 export type ThreadsObject = {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     slug?: string;
+    username?: string;
     threads: {
         _id: string;
         text: string;

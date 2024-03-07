@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import ThreadCard from '@/components/cards/thread-card';
 import { ThreadsObject } from '@/core/types/thread-data';
-import { fetchUserThreads, isPrivateUser, isUserAFollower } from '@/lib/actions/user.actions';
 import { fetchCommunityThreads } from '@/lib/actions/community.actions';
+import { fetchUserThreads, isPrivateUser, isUserAFollower } from '@/lib/actions/user.actions';
 
 type Props = {
     currentUserId: string;
@@ -12,7 +12,7 @@ type Props = {
 
 const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
     let result: ThreadsObject = {
-        id: '',
+        _id: '',
         name: '',
         image: '',
         threads: []
@@ -20,10 +20,8 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
 
     if (accountType === 'Community') {
         result = await fetchCommunityThreads(accountId, currentUserId);
-    } else {
-        if (currentUserId === accountId || !await isPrivateUser(accountId) || await isUserAFollower(accountId, currentUserId))
-            result = await fetchUserThreads(accountId);
-    }
+    } else if (currentUserId === accountId || !await isPrivateUser(accountId) || await isUserAFollower(accountId, currentUserId))
+        result = await fetchUserThreads(accountId);
 
     if (!result) redirect('/home');
 
@@ -40,18 +38,18 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
                         accountType === 'User' ? {
                             name: result.name,
                             image: result.image,
-                            id: result.id.toString(),
-                            username: result.slug ?? ''
+                            id: result._id.toString(),
+                            username: result?.username ?? ''
                         } : {
                             name: thread.author.name,
                             image: thread.author.image,
-                            id: thread.author.id.toString(),
+                            id: thread.author.id?.toString(),
                             username: thread.author.username
                         }
                     }
                     community={
                         accountType === 'Community'
-                            ? { name: result.name, id: result.id.toString(), image: result.image, slug: result?.slug ?? '' }
+                            ? { name: result.name, id: result._id?.toString(), image: result.image, slug: result.slug ?? '' }
                             : thread.community
                     }
                     createdAt={thread.createdAt}
