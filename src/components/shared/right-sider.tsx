@@ -1,7 +1,7 @@
 import UserCard from '../cards/user-card';
 import { currentUser } from '@clerk/nextjs';
-import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
 import { UserListOptions } from '@/core/types/user-data';
+import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
 import { CommunityListOptions } from '@/core/types/community-data';
 import { fetchCommunities } from '@/lib/actions/community.actions';
 

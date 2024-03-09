@@ -40,7 +40,7 @@ const PostThread = ({ userId }: Props) => {
         const thread: ThreadData = {
             text: values.thread,
             author: userId,
-            communityId: organization ? organization.id : null,
+            communityId: organization?.id ?? null,
             path: pathname,
         };
 

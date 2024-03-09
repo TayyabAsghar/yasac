@@ -8,7 +8,7 @@ export type ThreadData = {
 };
 
 export type ThreadAuthor = {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     username: string;

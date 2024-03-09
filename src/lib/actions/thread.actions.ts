@@ -190,9 +190,9 @@ export async function fetchThreadById(threadId: string, userId: string) {
                 select: '_id id name image username',
             }).populate({  // Populate the author field with _id and username
                 path: 'community',
-                // model: Community,
+                model: Community,
                 select: '_id id name image',
-            }).populate({ // Populate the community field with _id and name
+            }).populate({
                 path: 'children', // Populate the children field
                 populate: [{
                     path: 'author', // Populate the author field within children
@@ -206,6 +206,10 @@ export async function fetchThreadById(threadId: string, userId: string) {
                         model: User,
                         select: '_id id name parentId image username' // Select only _id and username fields of the author
                     }
+                }, {
+                    path: 'community',
+                    model: Community,
+                    select: '_id name image'
                 }]
             });
 
@@ -246,7 +250,7 @@ export async function fetchUserThreadsCount(userId: string) {
     }
 }
 
-export async function addCommentToThread(threadId: string, commentText: string, userId: string, path: string) {
+export async function addCommentToThread(threadId: string, commentText: string, userId: string, communityId: string, path: string) {
     try {
         connectToDB();
 
@@ -256,13 +260,23 @@ export async function addCommentToThread(threadId: string, commentText: string, 
         if (!originalThread) throw new Error('Thread not found');
 
         // Create the new comment thread
-        const commentThread = new Thread({ text: commentText, author: userId, parentId: threadId });
+        const commentThread = new Thread({
+            author: userId,
+            text: commentText,
+            parentId: threadId,
+            community: communityId
+        });
 
         // Save the comment thread to the database
         const savedCommentThread = await commentThread.save();
 
         // Update the original thread in the database
-        await Thread.findByIdAndUpdate(threadId, { $push: { children: savedCommentThread._id } });
+        let promises = [Thread.findByIdAndUpdate(threadId, { $push: { children: savedCommentThread._id } })];
+
+        if (communityId)
+            promises.push(Community.findByIdAndUpdate(communityId, { $push: { threads: savedCommentThread._id } }));
+
+        await Promise.all(promises);
 
         revalidatePath(path);
     } catch (error: any) {

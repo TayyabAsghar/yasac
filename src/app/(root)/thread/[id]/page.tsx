@@ -27,7 +27,6 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
         );
     };
 
-
     return (
         <section className='relative'>
             <div>
@@ -51,6 +50,7 @@ const Page = async ({ params }: { params: { id: string; }; }) => {
                     threadId={params.id.toString()}
                     currentUserImg={user.imageUrl}
                     currentUserId={userInfo._id.toString()}
+                    communityId={thread.community?._id?.toString()}
                 />
             </div>
 

@@ -11,7 +11,7 @@ const ThreadCard = async (threadData: ThreadCard) => {
         <article
             className={`flex flex-col rounded-xl w-full  ${threadData.isComment ? 'px-0 xs:px-7' : 'bg-dark-2 p-7'}`}>
             <div className='flex items-start justify-between w-full'>
-                <div className='flex flex-col gap-2 w-full'>
+                <div className='flex flex-col gap-2 w-full relative'>
                     <div className='flex justify-between items-center w-full max-sm:flex-col max-sm:items-start max-sm:gap-3'>
                         <Link href={`/profile/${threadData.author.username}`} className='relative h-12 w-12'>
                             <div className='flex items-center gap-3 w-max'>
@@ -25,25 +25,32 @@ const ThreadCard = async (threadData: ThreadCard) => {
                                 </div>
                             </div>
                         </Link>
-                        {!threadData.isComment &&
-                            <div className='flex whitespace-pre items-center  max-sm:flex-col'>
-                                <p className='text-subtle-medium text-gray-1'>
-                                    {formatDateString(threadData.createdAt)}
-                                </p>
-                                {threadData.community &&
-                                    <Link href={`/communities/${threadData.community.slug}`} className='flex items-center'>
-                                        <p className='text-gray-1 max-sm:hidden'>
-                                            {' - '}
-                                        </p>
-                                        <p className='text-subtle-medium text-gray-1'>
-                                            {`${threadData.community.name} Community`}
-                                        </p>
-                                        <Image src={threadData.community.image} alt={threadData.community.name} title={threadData.community.name}
-                                            width={14} height={14} className='ml-1 rounded-full object-cover' />
-                                    </Link>
-                                }
-                            </div>}
+                        <div className='flex whitespace-pre items-center  max-sm:flex-col'>
+                            <p className='text-subtle-medium text-gray-1'>
+                                {formatDateString(threadData.createdAt)}
+                            </p>
+                            {threadData.community &&
+                                <Link href={`/communities/${threadData.community.slug}`} className='flex items-center'>
+                                    <p className='text-gray-1 max-sm:hidden'>
+                                        {' - '}
+                                    </p>
+                                    <p className='text-subtle-medium text-gray-1'>
+                                        {`${threadData.community.name} Community`}
+                                    </p>
+                                    <Image src={threadData.community.image} alt={threadData.community.name} title={threadData.community.name}
+                                        width={14} height={14} className='ml-1 rounded-full object-cover' />
+                                </Link>
+                            }
+                        </div>
                     </div>
+                    {!threadData.isComment &&
+                        <div className='absolute right-0 top-[-10px] max-sm:top-3'>
+                            <DeleteThread
+                                threadId={threadData.id.toString()}
+                                currentUserId={threadData.currentUserId.toString()}
+                                authorId={threadData.author._id?.toString()}
+                            />
+                        </div>}
                     <div className='flex h-full'>
                         <div className='thread-card-bar' />
                         <div className='flex flex-col'>
@@ -67,12 +74,6 @@ const ThreadCard = async (threadData: ThreadCard) => {
                         </div>
                     </div>
                 </div>
-
-                <DeleteThread
-                    threadId={threadData.id.toString()}
-                    currentUserId={threadData.currentUserId.toString()}
-                    authorId={threadData.author.id?.toString()}
-                />
             </div>
 
             {!threadData.isComment && threadData.comments.length > 0 && <RepliedProfiles {...threadData} />}

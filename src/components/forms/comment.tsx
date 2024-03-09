@@ -14,11 +14,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 
 type Props = {
     threadId: string;
+    communityId: string;
     currentUserId: string;
     currentUserImg: string;
 };
 
-const Comment = (commentData: Props) => {
+const Comment = (prop: Props) => {
     const pathname = usePathname();
     const [disabled, setDisabled] = useState(true);
 
@@ -33,7 +34,7 @@ const Comment = (commentData: Props) => {
     };
 
     const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
-        await addCommentToThread(commentData.threadId, values.thread, commentData.currentUserId, pathname);
+        await addCommentToThread(prop.threadId, values.thread, prop.currentUserId, prop.communityId, pathname);
 
         form.reset();
     };
@@ -44,7 +45,7 @@ const Comment = (commentData: Props) => {
                 <FormField control={form.control} name='thread' render={({ field }) => (
                     <FormItem className='flex w-full items-center gap-3'>
                         <FormLabel>
-                            <Image src={commentData.currentUserImg} alt='User Profile' title='User Profile' width={48} height={48}
+                            <Image src={prop.currentUserImg} alt='User Profile' title='User Profile' width={48} height={48}
                                 className='rounded-full object-cover' />
                         </FormLabel>
                         <FormControl className='border-none bg-transparent'>

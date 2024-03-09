@@ -1,9 +1,9 @@
 import Image from 'next/image';
-import { LockKeyhole } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { formatNumber } from '@/lib/utils';
 import { currentUser } from '@clerk/nextjs';
 import UserCard from '@/components/cards/user-card';
+import { LockKeyhole, UserRoundX } from 'lucide-react';
 import ThreadsTab from '@/components/shared/thread-tab';
 import Pagination from '@/components/shared/pagination';
 import ProfileHeader from '@/components/shared/profile-header';
@@ -16,9 +16,11 @@ const Page = async ({ params, searchParams }: { params: { username: string; }, s
     const user = await currentUser();
     if (!user) return null;
 
+    let userInfo: any;
     let threadCount = 0;
     let loggedUser: any;
     let loggedUserId: string = '';
+    let isPrivate, isFollower = false;
     let username: string = params.username ?? '';
     const queryTab = searchParams.tab?.toLowerCase() ?? '';
     let result: { users: any[]; isNext: boolean; } = {
@@ -27,32 +29,41 @@ const Page = async ({ params, searchParams }: { params: { username: string; }, s
     };
     let defaultTab: string = !queryTab ? 'threads' : ProfileTabs.find(tab => tab.value === queryTab)?.value ?? redirect(`/profile/${username}`);
 
-    const userInfo = await fetchUserByUsername(username);
-    loggedUserId = userInfo._id;
+    try {
+        userInfo = await fetchUserByUsername(username);
+        loggedUserId = userInfo._id;
 
-    if (userInfo.id !== user.id) {
-        loggedUser = await fetchUser(user.id);
+        if (userInfo.id !== user.id) {
+            loggedUser = await fetchUser(user.id);
 
-        if (!userInfo?.onboarded) redirect('/onboarding');
+            if (!userInfo?.onboarded) redirect('/onboarding');
 
-        loggedUserId = loggedUser._id;
-        username = loggedUser.username;
-    } else if (!userInfo?.onboarded) redirect('/onboarding');
+            loggedUserId = loggedUser._id;
+            username = loggedUser.username;
+        } else if (!userInfo?.onboarded) redirect('/onboarding');
 
-    const [isPrivate, isFollower] = await Promise.all([
-        isPrivateUser(userInfo._id),
-        isUserAFollower(userInfo._id, loggedUserId)
-    ]);
+        [isPrivate, isFollower] = await Promise.all([
+            isPrivateUser(userInfo._id),
+            isUserAFollower(userInfo._id, loggedUserId)
+        ]);
 
-    if (loggedUserId === userInfo._id || !isPrivate || isFollower) {
-        threadCount = await fetchUserThreadsCount(userInfo._id);
-        result = await fetchFollowersList({
-            pageSize: 25,
-            sortBy: 'asc',
-            userId: userInfo._id,
-            removeFollowed: false,
-            pageNumber: searchParams?.page ? + searchParams.page : 1
-        });
+        if (loggedUserId === userInfo._id || !isPrivate || isFollower) {
+            threadCount = await fetchUserThreadsCount(userInfo._id);
+            result = await fetchFollowersList({
+                pageSize: 25,
+                sortBy: 'asc',
+                userId: userInfo._id,
+                removeFollowed: false,
+                pageNumber: searchParams?.page ? + searchParams.page : 1
+            });
+        }
+    } catch {
+        return (
+            <section className='flex flex-col justify-center items-center h-full gap-4 text-gray-1'>
+                <UserRoundX className='h-11 w-11' />
+                <p>{'This user doesn\'t exists.'}</p>
+            </section>
+        );
     }
 
     return (
