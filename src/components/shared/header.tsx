@@ -3,11 +3,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { dark } from '@clerk/themes';
+import { Skeleton } from '../ui/skeleton';
 import { useRouter } from 'next/navigation';
-import { OrganizationSwitcher, SignOutButton, SignedIn } from '@clerk/nextjs';
+import { OrganizationSwitcher, SignOutButton, SignedIn, useOrganization, useSignIn } from '@clerk/nextjs';
 
 const Header = () => {
     const router = useRouter();
+    const isLoadedSignIn = useSignIn().isLoaded;
+    const isLoadedOrganization = useOrganization().isLoaded;
 
     return (
         <nav className='header'>
@@ -18,20 +21,28 @@ const Header = () => {
 
             <div className='flex items-center gap-1'>
                 <div className='block md:hidden'>
-                    <SignedIn>
-                        <SignOutButton signOutCallback={() => router.push('/sign-in')}>
-                            <div className='flex cursor-pointer'>
-                                <Image src='/assets/logout.svg' alt='Logout' title='Logout' width={24} height={24} />
-                            </div>
-                        </SignOutButton>
-                    </SignedIn>
-                </div>
-                <OrganizationSwitcher appearance={{
-                    baseTheme: dark,
-                    elements: {
-                        organizationSwitcherTrigger: 'py-2 px-4',
+                    {isLoadedSignIn ?
+                        <SignedIn>
+                            <SignOutButton signOutCallback={() => router.push('/sign-in')}>
+                                <div className='flex cursor-pointer'>
+                                    <Image src='/assets/logout.svg' alt='Logout' title='Logout' width={24} height={24} />
+                                </div>
+                            </SignOutButton>
+                        </SignedIn> :
+                        <Skeleton className="h-6 w-6" />
                     }
-                }} />
+                </div>
+                <div className='h-12 w-[180px] max-sm:w-28'>
+                    {isLoadedOrganization ?
+                        <OrganizationSwitcher appearance={{
+                            baseTheme: dark,
+                            elements: {
+                                organizationSwitcherTrigger: 'py-2 px-4',
+                            }
+                        }} /> :
+                        <Skeleton className="h-full w-full" />
+                    }
+                </div>
             </div>
         </nav>
     );

@@ -1,14 +1,7 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { dark } from '@clerk/themes';
-import { useRouter } from 'next/navigation';
-import { OrganizationSwitcher, SignOutButton, SignedIn } from '@clerk/nextjs';
 
 const PageHeader = () => {
-    const router = useRouter();
-
     return (
         <nav className='header'>
             <Link href='/home' className='flex items-center gap-4'>

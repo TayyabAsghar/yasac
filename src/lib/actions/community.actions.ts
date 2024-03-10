@@ -40,7 +40,7 @@ export async function fetchCommunityDetails(slug: string) {
         const communityDetails = await Community.findOne({ slug: slug }).populate(['createdBy', {
             path: 'members',
             model: User,
-            select: 'name slug image _id id',
+            select: 'name slug image _id id username',
         }]);
 
         return communityDetails;
