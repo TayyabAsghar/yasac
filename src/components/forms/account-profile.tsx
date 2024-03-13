@@ -30,7 +30,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     const { startUpload } = useUploadThing('media');
 
     const form = useForm({
-        resolver: zodResolver(UserValidations),
+        resolver: zodResolver(UserValidations(user.username)),
         defaultValues: {
             bio: user.bio,
             email: user.email,
@@ -61,7 +61,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
         }
     };
 
-    const onSubmit = async (values: z.infer<typeof UserValidations>) => {
+    const onSubmit = async (values: z.infer<ReturnType<typeof UserValidations>>) => {
         setLoading(true);
         const hasImageChanged = isBase64Image(values.profilePhoto);
         const userData: DBUserData = {
@@ -83,7 +83,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
         await updateUser(userData).finally(() => setLoading(false));
 
-        if (pathname === '/profile/edit') router.back();
+        if (pathname === '/profile/edit') router.replace(`/profile/${values.username}`);
         else router.push('/home');
     };
 
@@ -162,7 +162,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                         <FormMessage />
                     </FormItem>
                 )} />
-                <Button className='bg-primary-500 hover:bg-secondary-500' disabled={loading} type='submit'>{btnTitle}</Button>
+                <Button className='bg-primary-500 hover:bg-secondary-500 disabled:opacity-30' disabled={loading} type='submit'>{btnTitle}</Button>
             </form>
         </Form >
     );

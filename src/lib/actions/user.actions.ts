@@ -36,6 +36,17 @@ export async function fetchUser(userId: string): Promise<any> {
     }
 }
 
+export async function usernameExists(username: string): Promise<boolean> {
+    try {
+        connectToDB();
+
+        const user = await User.exists({ username: username });
+        return user !== null;
+    } catch (error: any) {
+        throw new Error(`Failed to fetch usernames: ${error.message}`);
+    }
+}
+
 export async function fetchUserByUsername(username: string): Promise<any> {
     try {
         connectToDB();
