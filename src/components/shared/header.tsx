@@ -23,7 +23,7 @@ const Header = () => {
                 <div className='block md:hidden'>
                     {isLoadedSignIn ?
                         <SignedIn>
-                            <SignOutButton signOutCallback={() => router.push('/sign-in')}>
+                            <SignOutButton signOutCallback={() => router.push('/')}>
                                 <div className='flex cursor-pointer'>
                                     <Image src='/assets/logout.svg' alt='Logout' title='Logout' width={24} height={24} />
                                 </div>

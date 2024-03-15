@@ -22,7 +22,6 @@ const Pagination = ({ pageNumber, isNext, path }: Props) => {
 
         if (nextPageNumber > 1) router.push(`/${path}?page=${nextPageNumber}`);
         else router.push(`/${path}`);
-
     };
 
     if (!isNext && pageNumber === 1) return null;
