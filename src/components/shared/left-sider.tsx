@@ -30,18 +30,22 @@ const LeftSider = () => {
         <section className='custom-scrollbar left-sider'>
             <div className='flex w-full flex-1 flex-col gap-6 px-6'>
                 {SiderLinks.map(link => {
-                    const isActive: boolean = isLoaded ? (organization?.slug === (pathname.split('/')[2]?.toLowerCase() ?? '') ? link.route === '/profile' :
-                        pathname.includes(link.route) && link.route.length > 1) || pathname === link.route : false;
-                    if (link.route === '/profile')
-                        link.route = organization ? `/communities/${organization.slug}` : `${link.route}/${username}`;
+                    if (isLoadedSignIn) {
+                        const isActive: boolean = isLoaded ? (organization?.slug === (pathname.split('/')[2]?.toLowerCase() ?? '') ? link.route === '/profile' :
+                            pathname.includes(link.route) && link.route.length > 1) || pathname === link.route : false;
+                        if (link.route === '/profile')
+                            link.route = organization ? `/communities/${organization.slug}` : `${link.route}/${username}`;
 
-                    return (
-                        <Link href={link.route} key={link.label}
-                            className={`left-sider-link ${isActive ? 'bg-primary-500' : 'hover:bg-secondary-500'}`} >
-                            <Image src={link.imgURL} alt={link.label} title={link.label} width={24} height={24} />
-                            <p className='text-light-1 max-lg:hidden'>{link.label}</p>
-                        </Link>
-                    );
+                        return (
+                            <Link href={link.route} key={link.label}
+                                className={`left-sider-link ${isActive ? 'bg-primary-500' : 'hover:bg-secondary-500'}`} >
+                                <Image src={link.imgURL} alt={link.label} title={link.label} width={24} height={24} />
+                                <p className='text-light-1 max-lg:hidden'>{link.label}</p>
+                            </Link>
+                        );
+                    } else {
+                        return (<Skeleton key={link.label} className='left-sider-link h-14 w-[180px] max-lg:w-14' />);
+                    }
                 })}
             </div>
             <div className='flex justify-center mt-10 px-6'>
