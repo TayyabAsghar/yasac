@@ -161,9 +161,9 @@ export async function addMemberToCommunity(communityId: string, email: string) {
         session.startTransaction();
 
         // Find the community and user by their unique ids concurrently
-        const [community, user] = await Promise.all([
-            Community.findOne({ id: communityId }),
-            User.findOne({ email: email })
+        const [user, community] = await Promise.all([
+            User.findOne({ email: email }),
+            Community.findOne({ id: communityId })
         ]);
 
         if (!user) throw new NextError('User not found', 404);
@@ -176,18 +176,21 @@ export async function addMemberToCommunity(communityId: string, email: string) {
         if (includedInCommunity && includedInUser)
             throw new NextError('User is already a member of the community', 409);
 
+        let promises = [];
+
         // Add the community's _id to the communities array in the user
         if (!includedInCommunity) {
             user.communities.push(community._id);
-            await user.save();
+            promises.push(user.save());
         }
 
         // Add the user's _id to the members array in the community
         if (!includedInUser) {
             community.members.push(user._id);
-            await community.save();
+            promises.push(community.save());
         }
 
+        await Promise.all(promises);
         await session.commitTransaction();
 
         return community;
@@ -207,29 +210,27 @@ export async function removeUserFromCommunity(userId: string, communityId: strin
 
         session.startTransaction();
 
-        const userIdObject = await User.findOne({ id: userId }, { _id: 1 });
-        const communityIdObject = await Community.findOne(
-            { id: communityId },
-            { _id: 1 },
-            { session }
-        );
+        const [userIdObject, communityIdObject] = await Promise.all([
+            User.findOne({ id: userId }, { _id: 1 }),
+            Community.findOne({ id: communityId }, { _id: 1 }, { session })
+        ]);
 
         if (!userIdObject) throw new NextError('User not found', 404);
 
         if (!communityIdObject) throw new NextError('Community not found', 404);
 
-        // Remove the user's _id from the members array in the community
-        await Community.updateOne(
-            { _id: communityIdObject._id },
-            { $pull: { members: userIdObject._id } },
-            { session }
-        );
-
-        // Remove the community's _id from the communities array in the user
-        await User.updateOne(
-            { _id: userIdObject._id },
-            { $pull: { communities: communityIdObject._id } }
-        );
+        await Promise.all([
+            Community.updateOne(
+                { _id: communityIdObject._id },
+                { $pull: { members: userIdObject._id } },
+                { session }
+            ),
+            User.updateOne(
+                { _id: userIdObject._id },
+                { $pull: { communities: communityIdObject._id } },
+                { session }
+            )
+        ]);
 
         await session.commitTransaction();
 
@@ -273,15 +274,16 @@ export async function deleteCommunity(communityId: string) {
 
         if (!deletedCommunity) throw new NextError('Community not found', 404);
 
-        // Delete all threads associated with the community
-        await Thread.deleteMany({ community: deletedCommunity._id }, { session });
-
-        // Update all users who are part of the community in one go
-        await User.updateMany(
-            { communities: deletedCommunity._id },
-            { $pull: { communities: deletedCommunity._id } },
-            { session }
-        );
+        await Promise.all([
+            // Delete all threads associated with the community
+            Thread.deleteMany({ community: deletedCommunity._id }, { session }),
+            // Update all users who are part of the community in one go
+            User.updateMany(
+                { communities: deletedCommunity._id },
+                { $pull: { communities: deletedCommunity._id } },
+                { session }
+            )
+        ]);
 
         // Commit the transaction
         await session.commitTransaction();

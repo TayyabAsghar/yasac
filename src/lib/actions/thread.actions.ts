@@ -81,16 +81,19 @@ export async function createThread(thread: ThreadData) {
         });
 
         // Update User and Community models concurrently
-        const updatePromises = [
-            User.findByIdAndUpdate(thread.author, {
-                $push: { threads: createdThread._id },
-            }),
-            communityIdObject && Community.findByIdAndUpdate(communityIdObject, {
-                $push: { threads: createdThread._id }
-            })
-        ];
+        await Promise.all([
+            User.findByIdAndUpdate(
+                thread.author,
+                { $push: { threads: createdThread._id } },
+                { session }
+            ),
+            communityIdObject && Community.findByIdAndUpdate(
+                communityIdObject,
+                { $push: { threads: createdThread._id } },
+                { session }
+            )
+        ]);
 
-        await Promise.all(updatePromises);
         await session.commitTransaction();
 
         revalidatePath(thread.path);
@@ -156,19 +159,20 @@ export async function deleteThread(id: string, path: string): Promise<void> {
         ]);
 
         // Delete threads and update User and Community models concurrently
-        const deleteAndUpdatePromises = [
-            Thread.deleteMany({ _id: { $in: descendantThreadIds } }),
+        await Promise.all([
+            Thread.deleteMany({ _id: { $in: descendantThreadIds } }, { session }),
             User.updateMany(
                 { _id: { $in: Array.from(uniqueAuthorIds) } },
-                { $pull: { threads: { $in: descendantThreadIds } } }
+                { $pull: { threads: { $in: descendantThreadIds } } },
+                { session }
             ),
             Community.updateMany(
                 { _id: { $in: Array.from(uniqueCommunityIds) } },
-                { $pull: { threads: { $in: descendantThreadIds } } }
+                { $pull: { threads: { $in: descendantThreadIds } } },
+                { session }
             )
-        ];
+        ]);
 
-        await Promise.all(deleteAndUpdatePromises);
         await session.commitTransaction();
 
         revalidatePath(path);
