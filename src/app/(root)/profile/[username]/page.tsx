@@ -90,7 +90,7 @@ const Page = async ({ params, searchParams }: { params: { username: string; }, s
                     <Tabs defaultValue={defaultTab} className='w-full'>
                         <TabsList className='tab'>
                             {ProfileTabs.map((tab) => (
-                                <TabsTrigger key={tab.label} value={tab.value} className='tab' tabNavigation={`/profile/${username}?tab=${tab.value}`}>
+                                <TabsTrigger key={tab.label} value={tab.value} className='tab' tabNavigation={`/profile/${params.username}?tab=${tab.value}`}>
                                     <Image src={tab.icon} alt={tab.label} title={tab.label} width={24} height={24}
                                         className='object-contain' />
                                     <p className='max-sm:hidden'>{tab.label}</p>

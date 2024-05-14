@@ -7,6 +7,8 @@ import { Webhook, WebhookRequiredHeaders } from 'svix';
 import { CommunityData } from '@/core/types/community-data';
 import { addMemberToCommunity, createCommunity, deleteCommunity, removeUserFromCommunity, updateCommunityInfo } from '@/lib/actions/community.actions';
 
+export const maxDuration = 55;
+
 export const POST = async (req: Request) => {
     const NEXT_CLERK_WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
 

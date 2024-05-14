@@ -29,7 +29,7 @@ const Footer = () => {
         <section className='footer'>
             <div className='footer-container'>
                 {SiderLinks.map(link => {
-                    if (isLoadedSignIn) {
+                    if (isLoadedSignIn && (username || isLoaded)) {
 
                         const isActive: boolean = isLoaded ? (organization?.slug === (pathname.split('/')[2]?.toLowerCase() ?? '') ? link.route === '/profile' :
                             pathname.includes(link.route) && link.route.length > 1) || pathname === link.route : false;

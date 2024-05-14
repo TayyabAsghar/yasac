@@ -30,7 +30,7 @@ const LeftSider = () => {
         <section className='custom-scrollbar left-sider'>
             <div className='flex w-full flex-1 flex-col gap-6 px-6'>
                 {SiderLinks.map(link => {
-                    if (isLoadedSignIn) {
+                    if (isLoadedSignIn && (username || isLoaded)) {
                         const isActive: boolean = isLoaded ? (organization?.slug === (pathname.split('/')[2]?.toLowerCase() ?? '') ? link.route === '/profile' :
                             pathname.includes(link.route) && link.route.length > 1) || pathname === link.route : false;
                         if (link.route === '/profile')
