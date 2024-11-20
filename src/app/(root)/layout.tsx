@@ -4,13 +4,13 @@ import { Inter } from 'next/font/google';
 import { ReactNode, Suspense } from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from '@/components/shared/header';
-import Footer from '@/components/shared/footer';
 import { Toaster } from '@/components/ui/toaster';
-import LeftSider from '@/components/shared/left-sider';
+import Footer from '@/components/shared/navbar/footer';
 import RightSider from '@/components/shared/right-sider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import DialogProvider from '@/core/context/dialog-provider';
 import CustomDialog from '@/components/shared/custom-dialog';
+import LeftSider from '@/components/shared/navbar/left-sider';
 
 const inter = Inter({ subsets: ['latin'] });
 

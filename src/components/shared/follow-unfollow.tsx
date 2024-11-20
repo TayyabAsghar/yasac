@@ -27,7 +27,7 @@ const FollowUnfollow = ({ accountId, currentUser }: Props) => {
                 setFollowing(!following);
                 await followUser(accountId, currentUser, pathname);
             }
-        } catch (err: any) {
+        } catch (err) {
             setFollowing(!following);
         }
     };
