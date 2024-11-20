@@ -21,7 +21,7 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
         const publicUsers = await User.find({ _id: { $nin: [...user.following, userId] }, private: false }).select('_id');
 
         // TODO: Nee to add type here.
-        const query: FilterQuery<any> = {
+        const query: FilterQuery<typeof Thread.schema.obj> = {
             parentId: { $in: [null, undefined] }, // Query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply)
             author: { $in: [...user.following, ...publicUsers.map(user => user._id), userId] }
         };

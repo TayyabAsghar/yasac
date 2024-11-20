@@ -133,7 +133,7 @@ export async function fetchUsers(options: UserListOptions): Promise<{ users: any
         const regex = new RegExp(options?.searchString ?? '', 'i');
 
         // Create an initial query object to filter users.
-        const query: FilterQuery<typeof User> = {
+        const query: FilterQuery<typeof User.schema.obj> = {
             _id: { $ne: options.userId }, // Exclude the current user from the results.
             ...(options.removeFollowed && { followers: { $ne: options.userId } }) // Exclude if user is already being followed.
         };
@@ -173,7 +173,7 @@ export async function fetchFollowersList(options: UserListOptions): Promise<{ us
         const skipAmount = (options.pageNumber - 1) * options.pageSize;
 
         // Create an initial query object to filter users.
-        const query: FilterQuery<typeof User> = {
+        const query: FilterQuery<typeof User.schema.obj> = {
             _id: { $ne: options.userId }, // Exclude the current user from the results.
             followers: { $in: options.userId } // Include if user is being followed.
         };

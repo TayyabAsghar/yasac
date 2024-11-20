@@ -119,7 +119,7 @@ export async function fetchCommunities(options: CommunityListOptions): Promise<{
         const regex = new RegExp(options.searchString, 'i');
 
         // Create an initial query object to filter communities.
-        let query: FilterQuery<typeof Community> = {};
+        let query: FilterQuery<typeof Community.schema.obj> = {};
 
         if (options?.userId) query = { members: { $ne: options.userId } };
 

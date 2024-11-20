@@ -4,7 +4,7 @@ import { currentUser } from '@clerk/nextjs';
 import UserCard from '@/components/cards/user-card';
 import { fetchUser } from '@/lib/actions/user.actions';
 import ThreadsTab from '@/components/shared/thread-tab';
-import ProfileHeader from '@/components/shared/profile-header';
+import ProfileHeader from '@/components/shared/profile-header/profile-header';
 import { CommunityTabs } from '@/core/constants/navigation-links';
 import { fetchCommunityDetails } from '@/lib/actions/community.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

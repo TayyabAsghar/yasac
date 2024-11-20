@@ -6,7 +6,7 @@ import UserCard from '@/components/cards/user-card';
 import { LockKeyhole, UserRoundX } from 'lucide-react';
 import ThreadsTab from '@/components/shared/thread-tab';
 import Pagination from '@/components/shared/pagination';
-import ProfileHeader from '@/components/shared/profile-header';
+import ProfileHeader from '@/components/shared/profile-header/profile-header';
 import { ProfileTabs } from '@/core/constants/navigation-links';
 import { fetchUserThreadsCount } from '@/lib/actions/thread.actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

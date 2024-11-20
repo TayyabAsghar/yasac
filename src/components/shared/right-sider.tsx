@@ -5,91 +5,95 @@ import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
 import { CommunityListOptions } from '@/core/types/community-data';
 import { fetchCommunities } from '@/lib/actions/community.actions';
 
-const RightSider = async () => {
-    const user = await currentUser();
-    if (!user) return null;
+interface RenderListType {
+    items: any[];
+    title: string;
+    noItemsMessage: string;
+    type: 'User' | 'Community';
+}
 
-    const userInfo = await fetchUser(user.id);
-
+const fetchRightSiderData = async (userId: string) => {
     const userOptions: UserListOptions = {
         pageSize: 3,
         sortBy: 'asc',
         pageNumber: 1,
         searchString: '',
         removeFollowed: true,
-        userId: userInfo._id
-    };
+        userId,
+    } as const;
 
     const communityOptions: CommunityListOptions = {
         pageSize: 3,
         sortBy: 'asc',
         pageNumber: 1,
         searchString: '',
-        userId: userInfo._id
-    };
+        userId,
+    } as const;
 
-    let similarMinds: { users: any[]; isNext: boolean; };
-    let suggestedCommunities: { communities: any[]; isNext: boolean; };
+    // Fetch data concurrently
+    const [similarMinds, suggestedCommunities] = await Promise.all([
+        fetchUsers(userOptions),
+        fetchCommunities(communityOptions),
+    ]);
+
+    return { similarMinds, suggestedCommunities };
+};
+
+const RenderList = ({
+    title,
+    items,
+    type,
+    noItemsMessage,
+}: RenderListType) => (
+    <div className="flex flex-1 flex-col justify-start">
+        <h3 className="text-heading4-medium text-light-1">{title}</h3>
+        <div className="mt-7 flex w-[350px] flex-col gap-9">
+            {items.length > 0 ? (
+                items.map((item) => (
+                    <UserCard
+                        key={item.id.toString()}
+                        id={item.id.toString()}
+                        name={item.name}
+                        username={item.username || item.slug}
+                        imgUrl={item.image}
+                        personType={type}
+                    />
+                ))
+            ) : (
+                <p className="!text-base-regular text-light-3">{noItemsMessage}</p>
+            )}
+        </div>
+    </div>
+);
+
+const RightSider = async () => {
+    const user = await currentUser();
+    if (!user) return null;
 
     try {
-        [similarMinds, suggestedCommunities] = await Promise.all([
-            fetchUsers(userOptions),
-            fetchCommunities(communityOptions)
-        ]);
-    } catch {
-        return;
+        const userInfo = await fetchUser(user.id);
+        const { similarMinds, suggestedCommunities } = await fetchRightSiderData(userInfo._id);
+
+        return (
+            <section className="custom-scrollbar right-sider">
+                <RenderList
+                    title="Suggested Communities"
+                    items={suggestedCommunities.communities}
+                    type="Community"
+                    noItemsMessage="No communities yet"
+                />
+                <RenderList
+                    title="People You May Like"
+                    items={similarMinds.users}
+                    type="User"
+                    noItemsMessage="No users yet"
+                />
+            </section>
+        );
+    } catch (error) {
+        console.error('Error loading RightSider data:', error);
+        return null;
     }
-
-    return (
-        <section className='custom-scrollbar right-sider'>
-            <div className='flex flex-1 flex-col justify-start'>
-                <h3 className='text-heading4-medium text-light-1'>
-                    Suggested Communities
-                </h3>
-
-                <div className='mt-7 flex w-[350px] flex-col gap-9'>
-                    {suggestedCommunities.communities.length > 0 ? (
-                        <>
-                            {suggestedCommunities.communities.map((community) => (
-                                <UserCard
-                                    key={community.id.toString()}
-                                    id={community.id.toString()}
-                                    name={community.name}
-                                    username={community.slug}
-                                    imgUrl={community.image}
-                                    personType='Community'
-                                />
-                            ))}
-                        </>
-                    ) : (
-                        <p className='!text-base-regular text-light-3'>No communities yet</p>
-                    )}
-                </div>
-            </div>
-
-            <div className='flex flex-1 flex-col justify-start'>
-                <h3 className='text-heading4-medium text-light-1'>People You May Like</h3>
-                <div className='mt-7 flex w-[350px] flex-col gap-10'>
-                    {similarMinds.users.length > 0 ? (
-                        <>
-                            {similarMinds.users.map((person) => (
-                                <UserCard
-                                    key={person.id.toString()}
-                                    id={person.id.toString()}
-                                    name={person.name}
-                                    username={person.username}
-                                    imgUrl={person.image}
-                                    personType='User'
-                                />
-                            ))}
-                        </>
-                    ) : (
-                        <p className='!text-base-regular text-light-3'>No users yet</p>
-                    )}
-                </div>
-            </div>
-        </section>
-    );
 };
 
 export default RightSider;
