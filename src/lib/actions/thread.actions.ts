@@ -18,11 +18,12 @@ export async function fetchThread(userId: string, pageNumber = 1, pageSize = 20)
         const user = await User.findOne({ _id: userId }).select('following');
 
         // find the users that are not followed by user but are not private.
-        const publicUsers = await User.find({ _id: { $nin: [user.following, userId] }, private: false }).select('_id');
+        const publicUsers = await User.find({ _id: { $nin: [...user.following, userId] }, private: false }).select('_id');
 
-        const query: FilterQuery<typeof User> = {
+        // TODO: Nee to add type here.
+        const query: FilterQuery<any> = {
             parentId: { $in: [null, undefined] }, // Query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply)
-            author: { $in: [user.following, ...publicUsers.map(user => user._id.toString()), userId] }
+            author: { $in: [...user.following, ...publicUsers.map(user => user._id), userId] }
         };
 
         const postsQuery = Thread.find(query).sort({ createdAt: 'desc' })

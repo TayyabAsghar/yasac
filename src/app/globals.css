@@ -231,3 +231,8 @@
 .comment-form-btn {
   @apply rounded-3xl bg-primary-500  hover:bg-secondary-500 px-8 py-2 !text-small-regular text-light-1 max-xs:w-full !important;
 }
+
+/* Overriding TipTap Editor Class */
+.ProseMirror p {
+  @apply min-h-48 p-3;
+}

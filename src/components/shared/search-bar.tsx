@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
+import useDebounce from '@/core/hooks/useDebounce';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type Props = {
     routeType: string;
@@ -11,25 +12,36 @@ type Props = {
 
 const SearchBar = ({ routeType }: Props) => {
     const router = useRouter();
-    const [search, setSearch] = useState('');
+    const searchParams = useSearchParams();
+    const initialSearch = searchParams.get('q') || '';
+    const [search, setSearch] = useState(initialSearch);
+    const debouncedSearch = useDebounce(search, 0);
 
-    // query after 0.3s of no input
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            if (search) router.push(`/${routeType}?q=` + search);
-            else router.push(`/${routeType}`);
-        }, 300);
+        const query = debouncedSearch ? `/${routeType}?q=${debouncedSearch}` : `/${routeType}`;
+        router.push(query);
+    }, [debouncedSearch, routeType, router]);
 
-        return () => clearTimeout(delayDebounceFn);
-    }, [search, routeType, router]);
+    const placeholderText =
+        routeType === 'search' ? 'Search creators' : 'Search communities';
 
     return (
-        <div className='search-bar'>
-            <Image src='/assets/search-gray.svg' alt='Search' title='Search' width={24} height={24}
-                className='object-contain' />
-            <Input id='text' value={search} onChange={e => setSearch(e.target.value)}
-                placeholder={`${routeType !== 'search' ? 'Search communities' : 'Search creators'}`}
-                className='no-focus search-bar-input' />
+        <div className="search-bar">
+            <Image
+                src="/assets/search-gray.svg"
+                alt="Search"
+                title="Search"
+                width={24}
+                height={24}
+                className="object-contain"
+            />
+            <Input
+                id="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={placeholderText}
+                className="no-focus search-bar-input"
+            />
         </div>
     );
 };

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ThreadCard } from '@/core/types/thread-card';
+import { ThreadCardType } from '@/core/types/thread-card';
 import { getFirstTwoDistinctComments } from '@/lib/utils';
 
-const RepliedProfiles = (threadData: ThreadCard) => {
+const RepliedProfiles = (threadData: ThreadCardType) => {
     const distinctComments = getFirstTwoDistinctComments(threadData.comments);
 
     return (

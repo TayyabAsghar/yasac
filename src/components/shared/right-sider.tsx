@@ -12,7 +12,7 @@ const RightSider = async () => {
     const userInfo = await fetchUser(user.id);
 
     const userOptions: UserListOptions = {
-        pageSize: 4,
+        pageSize: 3,
         sortBy: 'asc',
         pageNumber: 1,
         searchString: '',
@@ -21,7 +21,7 @@ const RightSider = async () => {
     };
 
     const communityOptions: CommunityListOptions = {
-        pageSize: 4,
+        pageSize: 3,
         sortBy: 'asc',
         pageNumber: 1,
         searchString: '',

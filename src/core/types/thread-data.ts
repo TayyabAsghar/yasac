@@ -2,9 +2,10 @@ import { community } from './community-data';
 
 export type ThreadData = {
     text: string,
-    author: string,
-    communityId: string | null,
     path: string,
+    author: string,
+    image: File | undefined,
+    communityId: string | null;
 };
 
 export type ThreadAuthor = {

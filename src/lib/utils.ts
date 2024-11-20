@@ -7,12 +7,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function isBase64Image(imageData: string) {
+export const isBase64Image = (imageData: string) => {
   const base64Regex = /^data:image\/(png|jpe?g|gif|webp);base64,/;
   return base64Regex.test(imageData);
-}
+};
 
-export function formatDateString(dateString: string) {
+export const formatDateString = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
@@ -28,9 +28,9 @@ export function formatDateString(dateString: string) {
   });
 
   return `${time} - ${formattedDate}`;
-}
+};
 
-export function formatThreadCount(count: number): string {
+export const formatThreadCount = (count: number): string => {
   if (count === 0) {
     return 'No Threads';
   } else {
@@ -38,15 +38,15 @@ export function formatThreadCount(count: number): string {
     const threadWord = count === 1 ? 'Thread' : 'Threads';
     return `${threadCount} ${threadWord}`;
   }
-}
+};
 
-export function formatNumber(count: number): string {
+export const formatNumber = (count: number): string => {
   if (count < 1000) return count.toString();
   else if (count < 1000000) return `${(count / 1000).toFixed(1)} k`;
   else return count.toString();
 };
 
-export function getFirstTwoDistinctComments(array: any[]): ThreadComments[] {
+export const getFirstTwoDistinctComments = (array: any[]): ThreadComments[] => {
   let distinctImages = new Set();
   let distinctObjects = [];
 
@@ -61,6 +61,6 @@ export function getFirstTwoDistinctComments(array: any[]): ThreadComments[] {
   return distinctObjects;
 };
 
-export function toTitleCase(str: string) {
+export const toTitleCase = (str: string) => {
   return str.replace(/([^\W_]+[^\s-]*) */g, txt => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
 };

@@ -3,10 +3,16 @@ import Image from 'next/image';
 import { formatDateString } from '@/lib/utils';
 import ToggleHeart from '../shared/toggle-heart';
 import RepliedProfiles from '../ui/replied-profiles';
-import { ThreadCard } from '@/core/types/thread-card';
+import { ThreadCardType } from '@/core/types/thread-card';
 import DeleteThread from '@/components/forms/delete-thread';
 
-const ThreadCard = async (threadData: ThreadCard) => {
+const ThreadCard = async (threadData: ThreadCardType) => {
+    const HtmlRenderer = ({ htmlContent, className }: { htmlContent: string; className: string; }) => {
+        return (
+            <div className={className} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        );
+    };
+
     return (
         <article
             className={`flex flex-col rounded-xl w-full  ${threadData.isComment ? 'px-0 xs:px-7' : 'bg-dark-2 p-7'}`}>
@@ -54,7 +60,7 @@ const ThreadCard = async (threadData: ThreadCard) => {
                     <div className='flex h-full'>
                         <div className='thread-card-bar' />
                         <div className='flex flex-col'>
-                            <p className='mt-2 text-small-regular break-all text-light-2'>{threadData.content}</p>
+                            <HtmlRenderer className='mt-2 text-small-regular break-all text-light-2' htmlContent={threadData.content} />
                             <div className={`${threadData.isComment && 'mb-10'} mt-5 flex flex-col gap-3`}>
                                 <div className='flex gap-3.5'>
                                     <ToggleHeart threadId={threadData.id.toString()} userId={threadData.currentUserId.toString()} isLiked={threadData.isLiked}

@@ -9,47 +9,47 @@ import { likeThread, removeLike } from '@/lib/actions/thread.actions';
 type Props = {
     userId: string;
     threadId: string;
-    likesCount: number;
     isLiked: boolean;
+    likesCount: number;
 };
 
-const ToggleHeart = (props: Props) => {
+const ToggleHeart = ({ userId, threadId, likesCount, isLiked }: Props) => {
     const { toast } = useToast();
-    const [state, setState] = useState({ isLiked: props.isLiked, likesCount: props.likesCount });
+    const [state, setState] = useState({ isLiked, likesCount });
 
-    const toggleLike = async () => {
+    const handleToggleLike = async () => {
+        const prevState = { ...state };
+
         try {
             if (!state.isLiked) {
-                setState({ isLiked: !state.isLiked, likesCount: state.likesCount + 1 });
-                await likeThread(props.threadId, props.userId);
+                setState(prev => ({ isLiked: true, likesCount: prev.likesCount + 1 }));
+                await likeThread(threadId, userId);
             } else {
-                setState({ isLiked: !state.isLiked, likesCount: state.likesCount - 1 });
-                await removeLike(props.threadId, props.userId);
+                setState(prev => ({ isLiked: false, likesCount: prev.likesCount - 1 }));
+                await removeLike(threadId, userId);
             }
-        } catch {
+        } catch (error) {
+            setState(prevState);
             toast({
                 variant: 'destructive',
-                description: 'There was an error liking the Thread.'
+                description: 'There was an error liking the Thread.',
             });
-            setState({ isLiked: state.isLiked, likesCount: state.likesCount + (state.isLiked ? 1 : -1) });
         }
     };
 
     return (
-        <>
-            <div onClick={async () => await toggleLike()} className='flex gap-1'>
-                {state.isLiked ?
-                    <Image src='/assets/heart-filled.svg' alt='Like' title='Like' width={24} height={24}
-                        className='cursor-pointer object-contain' />
-                    :
-                    <Image src='/assets/heart-gray.svg' alt='Like' title='Like' width={24} height={24}
-                        className='cursor-pointer object-contain' />
-                }
-                {state.likesCount > 0 && (
-                    <span className='text-gray-1'>{formatNumber(state.likesCount)}</span>
-                )}
-            </div>
-        </>
+        <div onClick={handleToggleLike} className="flex gap-1 cursor-pointer">
+            <Image
+                src={state.isLiked ? '/assets/heart-filled.svg' : '/assets/heart-gray.svg'}
+                alt={state.isLiked ? 'Unlike' : 'Like'}
+                title={state.isLiked ? 'Unlike' : 'Like'}
+                width={24} height={24}
+                className="object-contain"
+            />
+            {state.likesCount > 0 && (
+                <span className="text-gray-1">{formatNumber(state.likesCount)}</span>
+            )}
+        </div>
     );
 };
 

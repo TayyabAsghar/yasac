@@ -1,4 +1,4 @@
-export const SiderLinks = [{
+export const SiderLinks: SiderLinksType[] = [{
     label: 'Home',
     route: '/home',
     imgURL: '/assets/home.svg'
@@ -24,7 +24,7 @@ export const SiderLinks = [{
     imgURL: '/assets/user.svg'
 }];
 
-export const ProfileTabs = [{
+export const ProfileTabs: ProfileTabsType[] = [{
     value: 'threads',
     label: 'Threads',
     icon: '/assets/reply.svg'
@@ -38,7 +38,7 @@ export const ProfileTabs = [{
     icon: '/assets/following.svg'
 }];
 
-export const CommunityTabs = [{
+export const CommunityTabs: CommunityTabsType[] = [{
     value: 'threads',
     label: 'Threads',
     icon: '/assets/reply.svg'
@@ -51,3 +51,19 @@ export const CommunityTabs = [{
     label: 'Requests',
     icon: '/assets/requests.svg'
 }];
+
+export type SiderLinksType = {
+    label: string;
+    route: string;
+    imgURL: string;
+};
+export type ProfileTabsType = {
+    value: string;
+    label: string;
+    icon: string;
+};
+export type CommunityTabsType = {
+    value: string;
+    label: string;
+    icon: string;
+};

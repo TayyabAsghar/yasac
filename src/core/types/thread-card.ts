@@ -1,7 +1,7 @@
 import { community } from './community-data';
 import { ThreadAuthor, ThreadComments } from './thread-data';
 
-export type ThreadCard = {
+export type ThreadCardType = {
     id: string;
     currentUserId: string;
     parentId: string | null;
