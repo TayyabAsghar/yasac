@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import PageHeader from '@/components/shared/landing-page/page-header';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
     title: 'YASAC',
@@ -23,7 +24,11 @@ const RootLayout = ({ children }: { children: React.ReactNode; }) => {
                         <section className='main-container'>
                             <div className='w-full h-full'>
                                 {children}
-                                <SpeedInsights />
+
+                                {/* Lazy load SpeedInsights */}
+                                <Suspense fallback={null}>
+                                    <SpeedInsights />
+                                </Suspense>
                             </div>
                         </section>
                     </main>

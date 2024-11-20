@@ -14,26 +14,35 @@ const FollowUnfollow = ({ accountId, currentUser }: Props) => {
     const pathname = usePathname();
     const [following, setFollowing] = useState(false);
 
-    const userAFollowingState = async () => setFollowing(await isUserAFollower(accountId, currentUser));
+    useEffect(() => {
+        const fetchFollowingState = async () => {
+            const isFollowing = await isUserAFollower(accountId, currentUser);
+            setFollowing(isFollowing);
+        };
 
-    useEffect(() => { userAFollowingState(); }, [following]);
+        fetchFollowingState();
+    }, [accountId, currentUser]);
 
     const handleClick = async () => {
+        const previousState = following;
+
         try {
-            if (following) {
-                setFollowing(!following);
+            setFollowing((prev) => !prev);
+
+            if (following)
                 await unFollowUser(accountId, currentUser, pathname);
-            } else {
-                setFollowing(!following);
+            else
                 await followUser(accountId, currentUser, pathname);
-            }
         } catch (err) {
-            setFollowing(!following);
+            setFollowing(previousState);
         }
     };
 
     return (
-        <Button className='bg-primary-500 hover:bg-secondary-500' onClick={handleClick}>
+        <Button
+            className="bg-primary-500 hover:bg-secondary-500"
+            onClick={handleClick}
+        >
             {following ? 'Unfollow' : 'Follow'}
         </Button>
     );
