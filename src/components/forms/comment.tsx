@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 import Image from 'next/image';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { usePathname } from 'next/navigation';
@@ -19,43 +18,50 @@ type Props = {
     currentUserImg: string;
 };
 
-const Comment = (prop: Props) => {
+const Comment = ({ threadId, communityId, currentUserId, currentUserImg }: Props) => {
     const pathname = usePathname();
-    const [disabled, setDisabled] = useState(true);
 
     const form = useForm({
         resolver: zodResolver(CommentValidation),
-        defaultValues: { thread: '' }
+        defaultValues: { thread: '' },
     });
 
-    const changeInput = (event: React.KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement; }) => {
-        form.setValue('thread', event.target.value);
-        setDisabled(event.target.value === '');
-    };
+    // Watch the form input value
+    const commentText = form.watch('thread');
 
+    // Handle form submission
     const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
-        await addCommentToThread(prop.threadId, values.thread, prop.currentUserId, prop.communityId, pathname);
-
-        form.reset();
+        try {
+            await addCommentToThread(threadId, values.thread, currentUserId, communityId, pathname);
+            form.reset();
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
     };
 
     return (
         <Form {...form}>
-            <form className='comment-form' onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField control={form.control} name='thread' render={({ field }) => (
-                    <FormItem className='flex w-full items-center gap-3'>
+            <form className="comment-form" onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField control={form.control} name="thread" render={({ field }) => (
+                    <FormItem className="flex w-full items-center gap-3">
+
                         <FormLabel>
-                            <Image src={prop.currentUserImg} alt='User Profile' title='User Profile' width={48} height={48}
-                                className='rounded-full object-cover' />
+                            <Image src={currentUserImg} className="rounded-full object-cover"
+                                alt="User Profile" title="User Profile" width={48} height={48} />
                         </FormLabel>
-                        <FormControl className='border-none bg-transparent'>
-                            <Input type='text' {...field} placeholder='Comment...' onChange={changeInput}
-                                className='no-focus text-light-1 outline-none' />
+
+                        <FormControl className="border-none bg-transparent">
+                            <Input type="text" {...field} placeholder="Comment..."
+                                className="no-focus text-light-1 outline-none"
+                                aria-label="Write a comment"
+                            />
                         </FormControl>
                     </FormItem>
                 )} />
 
-                <Button type='submit' className='comment-form-btn' disabled={disabled}>Reply</Button>
+                <Button type="submit" className="comment-form-btn" disabled={!commentText?.trim()} >
+                    Reply
+                </Button>
             </form>
         </Form>
     );

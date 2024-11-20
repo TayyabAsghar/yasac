@@ -14,7 +14,7 @@ import { BubbleMenu, useEditor, EditorContent } from '@tiptap/react';
 type Props = {
     content: string,
     className: string;
-    onChange: (html: string) => void;
+    onChange: (html: string, text: string) => void;
 };
 
 const TextEditor = ({ content, className, onChange }: Props) => {
@@ -29,7 +29,7 @@ const TextEditor = ({ content, className, onChange }: Props) => {
         immediatelyRender: false,
         onCreate: () => setLoading(false),
         onUpdate: ({ editor }) =>
-            onChange(editor.getHTML()),
+            onChange(editor.getHTML(), editor.getText()),
         editorProps: {
             attributes: {
                 class: "mt-1 p-2 pt-12 break-all border"
